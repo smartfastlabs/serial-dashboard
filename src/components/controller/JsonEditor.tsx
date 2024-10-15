@@ -1,5 +1,6 @@
 import { Component, onMount } from "solid-js";
 import { createJSONEditor } from "vanilla-jsoneditor";
+import { faDownload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 
 const JsonEditor: Component = (props) => {
   async function saveFile() {
@@ -41,6 +42,23 @@ const JsonEditor: Component = (props) => {
     return reader.readAsText(file);
   }
 
+  function handleRenderMenu(menuItems, context) {
+    menuItems.push(
+      {
+        type: "button",
+        icon: faDownload,
+        onClick: saveFile,
+      },
+      {
+        type: "button",
+        onClick: () => fileInput.click(),
+        icon: faFolderOpen,
+      }
+    );
+
+    return menuItems;
+  }
+
   const options = {};
   let container;
   let editor;
@@ -62,32 +80,13 @@ const JsonEditor: Component = (props) => {
             props.setConfig(updatedContent.json);
           }
         },
+        onRenderMenu: handleRenderMenu,
       },
     });
   });
   return (
-    <div class="text-start vh-100">
-      <div class="row">
-        <div class="col">
-          <input
-            ref={fileInput}
-            class="d-none"
-            type="file"
-            onChange={openFile}
-          />
-          <button
-            class="w-100 btn btn-primary"
-            onClick={() => fileInput.click()}
-          >
-            Open
-          </button>
-        </div>
-        <div class="col">
-          <button class="w-100 btn btn-primary" onClick={saveFile}>
-            Save
-          </button>
-        </div>
-      </div>
+    <div class="text-start vh-100" style="margin-top: 60px">
+      <input ref={fileInput} class="d-none" type="file" onChange={openFile} />
       <div ref={container}></div>
     </div>
   );

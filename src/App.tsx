@@ -1,18 +1,8 @@
-import {
-  createSignal,
-  Show,
-  Component,
-  For,
-  Switch,
-  Match,
-  onMount,
-} from "solid-js";
-import { createJSONEditor } from "vanilla-jsoneditor";
+import { createSignal, Component, For, onMount } from "solid-js";
 import { makePersisted } from "@solid-primitives/storage";
 import { SplitPane } from "solid-split-pane";
 import styles from "./App.module.css";
 import { WebSerialPort } from "./utils/WebSerial";
-import { LevelingConfig } from "./configs/leveling";
 import JsonEditor from "./components/Controller/JsonEditor";
 import Item from "./components/Controller/Item";
 import Log from "./components/Log";
@@ -39,15 +29,14 @@ function getMessage(event) {
 }
 
 const App: Component = () => {
-  const [config, setConfig] = makePersisted(createSignal(LevelingConfig));
+  const [config, setConfig] = makePersisted(createSignal({ root: {} }));
   const [metrics, setMetrics] = createSignal([]);
   const [messages, setMessages] = createSignal([]);
   const [baudRate, setBaudRate] = createSignal(115200);
   const [isConnected, setIsConnected] = createSignal(false);
-  const [displayMode, setDisplayMode] = createSignal("default");
-  const [showSerialMonitor, setShowSerialMonitor] = createSignal(false);
-  const [showDashboard, setShowDashboard] = createSignal(true);
-  const [showEditor, setShowEditor] = createSignal(true);
+  const [showSerialMonitor, setShowSerialMonitor] = createSignal(true);
+  const [showDashboard, setShowDashboard] = createSignal(false);
+  const [showEditor, setShowEditor] = createSignal(false);
   let serial;
 
   async function updateConfig(config) {
@@ -108,14 +97,14 @@ const App: Component = () => {
 
     if (editor) {
       children.push(
-        <div class="vh-100 overflow-scroll" style="padding-top: 150px">
+        <div class="vh-100 container-fluid  p-0">
           <JsonEditor setConfig={setConfig} config={config} />
         </div>
       );
     }
-    if (connected && serial) {
+    if (serial) {
       children.push(
-        <div class="vh-100 overflow-scroll" style="padding-top: 150px">
+        <div class="vh-100 container-fluid  p-0">
           <Log sendSerial={sendSerial} messages={messages} />
         </div>
       );

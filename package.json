@@ -16,6 +16,8 @@
     "vite-plugin-solid": "^2.8.2"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@solid-primitives/resize-observer": "^2.0.26",
     "@solid-primitives/storage": "^4.2.1",
     "solid-js": "^1.8.11",
     "solid-split-pane": "^0.0.5",

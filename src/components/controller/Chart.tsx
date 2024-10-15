@@ -1,10 +1,14 @@
 import { onMount, createEffect, createSignal } from "solid-js";
+import { makeResizeObserver } from "@solid-primitives/resize-observer";
 import Section from "./Section";
-import { i } from "vite/dist/node/types.d-aGj9QkWt";
 import uPlot from "uplot";
 import { scales } from "chart.js";
 
 const MyChart = (props) => {
+  const { observe, unobserve } = makeResizeObserver(resize, {
+    box: "content-box",
+  });
+
   let chartContainer = null;
   let plot = null;
 
@@ -63,7 +67,33 @@ const MyChart = (props) => {
     return data;
   }
 
+  function throttle(cb, limit) {
+    var wait = false;
+
+    return () => {
+      if (!wait) {
+        requestAnimationFrame(cb);
+        wait = true;
+        setTimeout(() => {
+          wait = false;
+        }, limit);
+      }
+    };
+  }
+
+  function resize(entries) {
+    for (const entry of entries) {
+      if (entry.target === chartContainer) {
+        plot.setSize({
+          width: entry.contentRect.width,
+          height: 300,
+        });
+      }
+    }
+  }
+
   onMount(() => {
+    observe(chartContainer);
     plot = new uPlot(options, getData(props.metrics()), chartContainer);
   });
 
@@ -75,7 +105,7 @@ const MyChart = (props) => {
   return (
     <div class={props.chart.class}>
       <Section isExpanded={!props.chart.hidden} header={props.chart.name}>
-        <div ref={chartContainer}></div>
+        <div class="w-100" ref={chartContainer}></div>
       </Section>
     </div>
   );

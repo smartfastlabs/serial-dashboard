@@ -1,18 +1,45 @@
-import { Component, Show, When, For } from "solid-js";
+import { Component, Show, createSignal, For } from "solid-js";
+import { createEffect } from "solid-js";
 
 const Log: Component = (props) => {
+  const [lockBottom, setLockBottom] = createSignal(true);
+  let messageContainer = null;
+
+  createEffect(() => {
+    let m = props.messages();
+    console.log("createRenderEffect");
+    if (messageContainer) {
+      console.log(
+        "SCROLL",
+        messageContainer.scrollTop,
+        messageContainer.scrollHeight
+      );
+      if (lockBottom()) {
+        messageContainer.scrollTo({
+          top: 1000000000,
+        });
+      }
+    }
+  });
   console.log("LOGS COMPONENT", props);
   return (
-    <div class="vh-100 overflow-scroll">
-      <h4>Serial Messages</h4>
-      <div>
-        <For each={props.messages && props.messages().slice(-100)}>
+    <div class="vh-100 w-100 container-fluid overflow-hidden">
+      <div class="row bg-white w-100" style="margin-top: 60px">
+        <h4>Serial Messages</h4>
+      </div>
+      <div
+        class="bg-primary row overflow-scroll"
+        style="height: calc(100% - 147px);"
+        ref={messageContainer}
+      >
+        <For each={props.messages && props.messages().slice(-50)}>
           {(m, i) => {
             return (
-              <div class="row my-2 mx-1 border">
+              <div class="row my-2 mx-1 border-1">
                 <Switch>
                   <Match when={m.direction === "in"}>
                     <div class="col-1 bg-light border-right">
+                      [{i}/50] {m.recievedAt.toLocaleTimeString()}{" "}
                       {m.direction.toUpperCase()}
                     </div>
                   </Match>

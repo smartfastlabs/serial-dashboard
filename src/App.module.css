@@ -3,7 +3,6 @@
   width: 100%;
   text-align: center;
   overflow: scroll;
-  margin-top: -80px;
 }
 .gutter {
   background-color: #ff0000;
@@ -32,4 +31,10 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.scroll-bottom {
+  overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
 }

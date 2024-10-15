@@ -68,19 +68,19 @@ const Header: Component = (props) => {
               configurator
             </label>
           </div>
+          <div class="ms-3 form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="flexSwitchCheckDisabled"
+              onchange={(e) => props.setShowSerialMonitor(e.target.checked)}
+              checked={props.showSerialMonitor()}
+            />
+            <label class="form-check-label" for="flexSwitchCheckDisabled">
+              monitor
+            </label>
+          </div>
           <Show when={props.isConnected()}>
-            <div class="ms-3 form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="flexSwitchCheckDisabled"
-                onchange={(e) => props.setShowSerialMonitor(e.target.checked)}
-                checked={props.showSerialMonitor()}
-              />
-              <label class="form-check-label" for="flexSwitchCheckDisabled">
-                monitor
-              </label>
-            </div>
             <input
               style="width: 400px"
               class="form-control ms-3 me-2"
