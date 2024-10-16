@@ -89,7 +89,7 @@ const App: Component = () => {
 
     if (dash) {
       children.push(
-        <div class="vh-100 overflow-scroll" style="padding-top: 150px">
+        <div class="vh-100 overflow-scroll" style="padding-top: 60px">
           <Item metrics={metrics} sendSerial={sendSerial} {...config().root} />
         </div>
       );
