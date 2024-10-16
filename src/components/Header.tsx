@@ -80,18 +80,6 @@ const Header: Component = (props) => {
               monitor
             </label>
           </div>
-          <Show when={props.isConnected()}>
-            <input
-              style="width: 400px"
-              class="form-control ms-3 me-2"
-              placeholder="Send Serial"
-              aria-label="Send Serial"
-              onChange={(e) => setValue(e.target.value)}
-            />
-            <button class="btn btn-outline-success" onClick={sendSerial}>
-              Send
-            </button>
-          </Show>
           <Show when={!props.isConnected()}>
             <div class="dropdown mx-2">
               <button

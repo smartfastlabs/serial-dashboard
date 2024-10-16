@@ -7,6 +7,7 @@ const Log: Component = (props) => {
   const [sendNewLine, setSendNewLine] = createSignal(true);
   const [sendCarriageReturn, setSendCarriageReturn] = createSignal("");
   const [filters, setFilters] = createSignal([]);
+  const [pauseMessagesAt, setPauseMessagesAt] = createSignal(0);
 
   let messageContainer = null;
 
@@ -17,18 +18,22 @@ const Log: Component = (props) => {
 
   createEffect(() => {
     let m = props.messages();
-    console.log("createRenderEffect");
     if (messageContainer) {
-      console.log(
-        "SCROLL",
-        messageContainer.scrollTop,
-        messageContainer.scrollHeight
-      );
       if (lockBottom()) {
+        console.log("scrolling to bottom");
         messageContainer.scrollTo({
           top: 1000000000,
         });
       }
+    }
+  });
+
+  createEffect(() => {
+    if (lockBottom()) {
+      setPauseMessagesAt(null);
+    } else {
+      console.log("setPaushMessagesAt");
+      setPauseMessagesAt(new Date());
     }
   });
 
@@ -66,54 +71,74 @@ const Log: Component = (props) => {
           </div>
         </div>
         <div class="row">
-          <div class="container-fluid">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <div class="ms-3 form-check form-switch">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    onChange={(e) => setSendNewLine(e.target.checked)}
-                    checked={sendNewLine()}
-                  />
-                  <label class="form-check-label" for="flexSwitchCheckDefault">
-                    Send with \n
-                  </label>
-                </div>
-              </li>
-              <li class="nav-item">
-                <div class="ms-3 form-check form-switch">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    onChange={(e) => setSendCarriageReturn(e.target.checked)}
-                    checked={sendCarriageReturn()}
-                  />
-                  <label class="form-check-label" for="flexSwitchCheckDefault">
-                    Send with \r
-                  </label>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a class="dropdown-item" href="#">
-                  Another action
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="dropdown-item" href="#">
-                  Something else here
-                </a>
-              </li>
-            </ul>
+          <div class="col-2 form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="lockBottomCheckbox"
+              checked={lockBottom()}
+              onChange={(e) => setLockBottom(e.target.checked)}
+            />
+            <label
+              class="fw-bold float-start form-check-label"
+              for="inlineCheckbox1"
+            >
+              Auto Scroll
+            </label>
+          </div>
+          <div class="col-2 form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="sendNewLineCheckbox"
+              checked={sendNewLine()}
+              onChange={(e) => setSendNewLine(e.target.checked)}
+            />
+            <label
+              class="float-start fw-bold form-check-label"
+              for="sendNewLineCheckbox"
+            >
+              Send \n
+            </label>
+          </div>
+          <div class="col-2 form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="sendCarriageReturnCheckbox"
+              checked={sendCarriageReturn()}
+              onChange={(e) => setSendCarriageReturn(e.target.checked)}
+            />
+            <label
+              class="float-start fw-bold form-check-label"
+              for="sendNewLineCheckbox"
+            >
+              Send \r
+            </label>
           </div>
         </div>
       </div>
       <div
-        class="bg-primary row overflow-scroll"
+        class={`bg-primary row ${
+          lockBottom() ? "overflow-hidden" : "overflow-scroll"
+        }`}
         style="height: calc(100% - 147px);"
         ref={messageContainer}
       >
-        <For each={props.messages && props.messages().slice(-50)}>
+        <For
+          each={
+            props.messages &&
+            props
+              .messages()
+              .filter((m) => {
+                if (!pauseMessagesAt()) {
+                  return true;
+                }
+                return m.recievedAt < pauseMessagesAt();
+              })
+              .slice(-100)
+          }
+        >
           {(m, i) => {
             return (
               <div class="row my-2 mx-1 border-1">

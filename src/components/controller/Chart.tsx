@@ -86,7 +86,7 @@ const MyChart = (props) => {
       if (entry.target === chartContainer) {
         plot.setSize({
           width: entry.contentRect.width,
-          height: 300,
+          height: 350,
         });
       }
     }

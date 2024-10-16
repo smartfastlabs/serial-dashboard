@@ -56,8 +56,8 @@ const App: Component = () => {
     } else {
       console.log("Message: ", event.detail);
       setMessages((current) => {
-        if (current.length > 250) {
-          current = current.slice(-200);
+        if (current.length > 10000) {
+          current = current.slice(-8000);
         }
         return [...current, getMessage(event)];
       });
