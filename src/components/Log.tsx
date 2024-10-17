@@ -2,36 +2,47 @@ import { Component, Show, createSignal, For, on } from "solid-js";
 import { createEffect } from "solid-js";
 
 const Log: Component = (props) => {
-  const [lockBottom, setLockBottom] = createSignal(true);
   const [sendValue, setSendValue] = createSignal("");
   const [sendNewLine, setSendNewLine] = createSignal(true);
   const [sendCarriageReturn, setSendCarriageReturn] = createSignal("");
+  const [showOutgoing, setShowOutgoing] = createSignal(true);
   const [filters, setFilters] = createSignal([]);
   const [pauseMessagesAt, setPauseMessagesAt] = createSignal(0);
 
   let messageContainer = null;
 
+  function getMessages(messages, _showOutgoing) {
+    if (!messages) return [];
+    if (!_showOutgoing) {
+      messages = messages.filter((m) => m.direction === "in");
+    }
+    if (pauseMessagesAt()) {
+      messages = messages.filter((m) => m.timestamp < pauseMessagesAt());
+    }
+
+    return messages.slice(-100);
+  }
+
   function sendSerial() {
-    props.sendSerial(sendValue());
+    var value = sendValue();
+    if (sendCarriageReturn()) {
+      value += "\r";
+    }
+    if (sendNewLine()) {
+      value += "\n";
+    }
+    props.sendSerial(value);
     setSendValue("");
   }
 
   createEffect(() => {
     let m = props.messages();
     if (messageContainer) {
-      if (lockBottom()) {
+      if (!pauseMessagesAt()) {
         messageContainer.scrollTo({
           top: 1000000000,
         });
       }
-    }
-  });
-
-  createEffect(() => {
-    if (lockBottom()) {
-      setPauseMessagesAt(null);
-    } else {
-      setPauseMessagesAt(new Date());
     }
   });
 
@@ -64,20 +75,37 @@ const Log: Component = (props) => {
             </button>
           </div>
         </div>
-        <div class="row">
+        <div class="row ps-4">
           <div class="col-2 form-check form-check-inline">
             <input
               class="form-check-input"
               type="checkbox"
-              id="lockBottomCheckbox"
-              checked={lockBottom()}
-              onChange={(e) => setLockBottom(e.target.checked)}
+              id="showOutgoingCheckbox"
+              checked={showOutgoing()}
+              onChange={(e) => setShowOutgoing(e.target.checked)}
             />
             <label
               class="fw-bold float-start form-check-label"
-              for="inlineCheckbox1"
+              for="showOutgoingCheckbox"
             >
-              Auto Scroll
+              Show Outgoing
+            </label>
+          </div>
+          <div class="col-2 form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="pauseMessagesCheckbox"
+              checked={pauseMessagesAt()}
+              onChange={(e) =>
+                setPauseMessagesAt(e.target.checked ? new Date() : null)
+              }
+            />
+            <label
+              class="fw-bold float-start form-check-label"
+              for="pauseMessagesCheckbox"
+            >
+              Pause Inbound
             </label>
           </div>
           <div class="col-2 form-check form-check-inline">
@@ -112,42 +140,43 @@ const Log: Component = (props) => {
           </div>
         </div>
       </div>
-      <div
-        class={`bg-primary row ${
-          lockBottom() ? "overflow-hidden" : "overflow-scroll"
+      <ul
+        class={`list-group ${
+          pauseMessagesAt() === null ? "overflow-hidden" : "overflow-scroll"
         }`}
-        style="height: calc(100% - 147px);"
+        style="height: calc(100% - 200px);"
         ref={messageContainer}
       >
         <For
-          each={
-            props.messages &&
-            props
-              .messages()
-              .filter((m) => {
-                if (!pauseMessagesAt()) {
-                  return true;
-                }
-                return m.recievedAt < pauseMessagesAt();
-              })
-              .slice(-100)
-          }
+          each={getMessages(props.messages && props.messages(), showOutgoing())}
         >
           {(m, i) => {
             return (
-              <div class="row my-2 mx-1 border-1">
-                <Switch>
-                  <Match when={m.direction === "in"}>
-                    <div class="col-1 bg-light border-right">
-                      [{i}/50] {m.recievedAt.toLocaleTimeString()}{" "}
-                      {m.direction.toUpperCase()}
-                    </div>
-                  </Match>
-                  <Match when={m.direction === "out"}>
-                    <div class="col-1 bg-secondary r-right">{m.direction}</div>
-                  </Match>
-                </Switch>
+              <li
+                class={`list-group-item d-flex justify-content-between align-items-start ${
+                  i() % 2 == 0 ? "" : "bg-light"
+                }`}
+              >
+                <div class="text-monospace col-1 border-right">
+                  [{m.direction.toUpperCase()}]{" "}
+                  {m.timestamp.toLocaleTimeString()}
+                </div>
                 <div class="col text-start">{m.message}</div>
+                <Show when={m.direction === "in"}>
+                  <div class="col-1">
+                    <a
+                      href="#"
+                      onClick={() => {
+                        console.log("copying");
+                        navigator.clipboard
+                          .writeText(m.message)
+                          .then(console.log);
+                      }}
+                    >
+                      copy
+                    </a>
+                  </div>
+                </Show>
                 <Show when={m.direction === "out"}>
                   <div class="col-1">
                     <a href="#" onClick={() => props.sendSerial(m.message)}>
@@ -155,11 +184,11 @@ const Log: Component = (props) => {
                     </a>
                   </div>
                 </Show>
-              </div>
+              </li>
             );
           }}
         </For>
-      </div>
+      </ul>
     </div>
   );
 };

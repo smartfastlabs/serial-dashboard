@@ -92,7 +92,17 @@ const Header: Component = (props) => {
               metrics
             </label>
           </div>
-          <Show when={!props.isConnected()}>
+          <Show
+            when={!props.isConnected()}
+            fallback={
+              <button
+                class="btn btn-outline-success mx-2"
+                onclick={props.disconnect}
+              >
+                Disconnect
+              </button>
+            }
+          >
             <div class="dropdown mx-2">
               <button
                 class="btn btn-secondary dropdown-toggle"

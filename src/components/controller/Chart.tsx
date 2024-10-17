@@ -50,8 +50,8 @@ const MyChart = (props) => {
     },
   };
 
-  const startTime = Date.now();
   function getData(metrics) {
+    const startTime = metrics[0].timestamp;
     const data = Array(series.length);
     for (let i = 0; i < series.length; i++) {
       data[i] = Array(metrics.length);
@@ -59,7 +59,7 @@ const MyChart = (props) => {
 
     for (const [i, metric] of metrics.entries()) {
       const j = keys.findIndex((m) => metric.key === m);
-      data[0][i] = (metric.recievedAt - startTime) / 1000;
+      data[0][i] = (metric.timestamp - startTime) / 1000;
       if (j > -1) {
         data[j + 1][i] = metric.value;
       }

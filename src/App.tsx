@@ -16,7 +16,7 @@ function getMetric(event) {
   return {
     key: data[0],
     value: parseFloat(data[1]),
-    recievedAt: new Date(),
+    timestamp: new Date(),
   };
 }
 
@@ -24,7 +24,7 @@ function getMessage(event) {
   return {
     message: event.detail,
     direction: "in",
-    recievedAt: new Date(),
+    timestamp: new Date(),
   };
 }
 
@@ -46,6 +46,7 @@ const App: Component = () => {
   }
 
   async function readSerial(event) {
+    if (!event) return;
     if ((event.detail.match(/>/g) || []).length == 1) {
       const metric = getMetric(event);
       setMetrics((current) => {
@@ -61,6 +62,7 @@ const App: Component = () => {
             return current.map((m) => (m.key === metric.key ? metric : m));
           }
         }
+        //TODO: USE PRODUCE
         return [...current, metric];
       });
     } else {
@@ -68,6 +70,7 @@ const App: Component = () => {
         if (current.length > 10000) {
           current = current.slice(-8000);
         }
+        //TODO: USE PRODUCE
         return [...current, getMessage(event)];
       });
     }
@@ -77,13 +80,18 @@ const App: Component = () => {
     await serial.sendSerial(value);
     setMessages((current) => [
       ...current,
-      { message: value, direction: "out" },
+      { message: value, timestamp: new Date(), direction: "out" },
     ]);
   }
 
   async function connect() {
     console.log("Connecting");
     setIsConnected(await serial.openPort());
+  }
+  async function disconnect() {
+    console.log("Disconnecting");
+    serial.disconnect();
+    setIsConnected(false);
   }
 
   async function clearData() {
@@ -103,7 +111,10 @@ const App: Component = () => {
 
     if (_showDashboard) {
       children.push(
-        <div class="vh-100 overflow-scroll" style="padding-top: 60px">
+        <div
+          class="vh-100 overflow-scroll"
+          style="height: calc(100% - 200px); padding-bottom: 60px; padding-top: 60px"
+        >
           <Item metrics={metrics} sendSerial={sendSerial} {...config().root} />
         </div>
       );
@@ -149,6 +160,7 @@ const App: Component = () => {
     <>
       <Header
         connect={connect}
+        disconnect={disconnect}
         isConnected={isConnected}
         baudRate={baudRate}
         setBaudRate={setBaudRate}

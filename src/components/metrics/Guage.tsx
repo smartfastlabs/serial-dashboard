@@ -7,8 +7,8 @@ const MetricsGuage: Component = (props) => {
         <h4>{props.name}</h4>
       </Show>
       <h2>{props.value}</h2>
-      <Show when={props.recievedAt}>
-        <h2>{props.recievedAt.toLocaleTimeString()}</h2>
+      <Show when={props.timestamp}>
+        <h2>{props.timestamp.toLocaleTimeString()}</h2>
       </Show>
     </div>
   );

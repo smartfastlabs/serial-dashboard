@@ -21,6 +21,10 @@ export class WebSerialPort {
     parent.addEventListener("data", onMessage);
   }
 
+  isConnected(): Boolean {
+    return this.port !== null;
+  }
+
   async openPort(): Boolean {
     console.log("openPort");
     try {
@@ -35,7 +39,7 @@ export class WebSerialPort {
     return false;
   }
 
-  async closePort() {
+  async disconnect() {
     if (this.port) {
       this.reader.cancel();
       await this.serialReadPromise;
@@ -56,7 +60,8 @@ export class WebSerialPort {
     if (!this.port) return;
 
     var buffer = "";
-    while (this.port.readable) {
+    this.connected = true;
+    while (this.connected && this.port.readable) {
       this.reader = this.port.readable.getReader();
       try {
         const { value, done } = await this.reader.read();
