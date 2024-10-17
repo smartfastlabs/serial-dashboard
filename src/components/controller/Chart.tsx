@@ -3,6 +3,7 @@ import { makeResizeObserver } from "@solid-primitives/resize-observer";
 import Section from "./Section";
 import uPlot from "uplot";
 import { scales } from "chart.js";
+import { COLORS } from "../../utils/Color";
 
 const MyChart = (props) => {
   const { observe, unobserve } = makeResizeObserver(resize, {
@@ -14,11 +15,11 @@ const MyChart = (props) => {
 
   let series = [{}];
   let keys = [];
-  for (let metric of props.chart.dataSets) {
+  for (const [i, metric] of props.chart.dataSets.entries()) {
     keys.push(metric.key);
     series.push({
       label: metric.name,
-      stroke: "red",
+      stroke: metric.color || COLORS[i % COLORS.length],
       spanGaps: true,
     });
   }
@@ -39,7 +40,7 @@ const MyChart = (props) => {
   let options = {
     width: 500,
     height: 300,
-    series: series.slice(0, 4),
+    series: series,
     cursor: cursorOpts,
     scales: {
       x: {
@@ -98,7 +99,6 @@ const MyChart = (props) => {
   });
 
   createEffect(() => {
-    console.log("UPDATING CHART");
     plot.setData(getData(props.metrics()));
   });
 

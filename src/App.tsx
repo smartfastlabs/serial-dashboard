@@ -1,4 +1,5 @@
 import { createSignal, Component, For, onMount } from "solid-js";
+import { createStore } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
 import { SplitPane } from "solid-split-pane";
 import styles from "./App.module.css";
@@ -29,6 +30,7 @@ function getMessage(event) {
 
 const App: Component = () => {
   const [config, setConfig] = makePersisted(createSignal({ root: {} }));
+  const [metricStore, setMetricStore] = createStore([]);
   const [metrics, setMetrics] = createSignal([]);
   const [messages, setMessages] = createSignal([]);
   const [baudRate, setBaudRate] = createSignal(115200);
@@ -45,11 +47,21 @@ const App: Component = () => {
 
   async function readSerial(event) {
     if ((event.detail.match(/>/g) || []).length == 1) {
+      const metric = getMetric(event);
       setMetrics((current) => {
         if (current.length > 25000) {
           current = current.slice(-20000);
         }
-        return [...current, getMetric(event)];
+        return [...current, metric];
+      });
+      setMetricStore((current) => {
+        if (!metric) return current;
+        for (let currentValue of current) {
+          if (currentValue && currentValue.key === metric.key) {
+            return current.map((m) => (m.key === metric.key ? metric : m));
+          }
+        }
+        return [...current, metric];
       });
     } else {
       setMessages((current) => {
@@ -75,6 +87,7 @@ const App: Component = () => {
   }
 
   async function clearData() {
+    setMetricStore((current) => []);
     setMetrics([]);
     setMessages([]);
   }
@@ -115,7 +128,7 @@ const App: Component = () => {
     if (_showMetrics) {
       children.push(
         <div class="vh-100 container-fluid p-0">
-          <MetricsOverview metrics={metrics} />
+          <MetricsOverview metricStore={metricStore} metrics={metrics} />
         </div>
       );
     }

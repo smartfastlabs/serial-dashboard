@@ -22,21 +22,9 @@ const MetricsOverview: Component = (props) => {
   console.log("METRICS OVERVIEW", props);
   return (
     <div style="margin-top: 80px">
-      <For each={getMetrics(props.metrics())}>
+      <For each={props.metricStore}>
         {(metric, i) => {
-          return (
-            <>
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-              <MetricsGuage {...metric} />
-            </>
-          );
+          return <MetricsGuage {...metric} />;
         }}
       </For>
     </div>
