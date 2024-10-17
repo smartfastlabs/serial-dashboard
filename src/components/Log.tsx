@@ -7,17 +7,13 @@ const Log: Component = (props) => {
   const [sendCarriageReturn, setSendCarriageReturn] = createSignal("");
   const [showOutgoing, setShowOutgoing] = createSignal(true);
   const [filters, setFilters] = createSignal([]);
-  const [pauseMessagesAt, setPauseMessagesAt] = createSignal(0);
 
   let messageContainer = null;
 
   function getMessages(messages, _showOutgoing) {
     if (!messages) return [];
     if (!_showOutgoing) {
-      messages = messages.filter((m) => m.direction === "in");
-    }
-    if (pauseMessagesAt()) {
-      messages = messages.filter((m) => m.timestamp < pauseMessagesAt());
+      messages = messages.filter((m) => m.direction === "RX");
     }
 
     return messages.slice(-100);
@@ -38,11 +34,9 @@ const Log: Component = (props) => {
   createEffect(() => {
     let m = props.messages();
     if (messageContainer) {
-      if (!pauseMessagesAt()) {
-        messageContainer.scrollTo({
-          top: 1000000000,
-        });
-      }
+      messageContainer.scrollTo({
+        top: 1000000000,
+      });
     }
   });
 
@@ -95,23 +89,6 @@ const Log: Component = (props) => {
             <input
               class="form-check-input"
               type="checkbox"
-              id="pauseMessagesCheckbox"
-              checked={pauseMessagesAt()}
-              onChange={(e) =>
-                setPauseMessagesAt(e.target.checked ? new Date() : null)
-              }
-            />
-            <label
-              class="fw-bold float-start form-check-label"
-              for="pauseMessagesCheckbox"
-            >
-              Pause Inbound
-            </label>
-          </div>
-          <div class="col-2 form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="checkbox"
               id="sendNewLineCheckbox"
               checked={sendNewLine()}
               onChange={(e) => setSendNewLine(e.target.checked)}
@@ -141,10 +118,8 @@ const Log: Component = (props) => {
         </div>
       </div>
       <ul
-        class={`list-group ${
-          pauseMessagesAt() === null ? "overflow-hidden" : "overflow-scroll"
-        }`}
-        style="height: calc(100% - 200px);"
+        class={`list-group overflow-scroll`}
+        style="height: calc(100% - 220px);"
         ref={messageContainer}
       >
         <For
@@ -157,13 +132,15 @@ const Log: Component = (props) => {
                   i() % 2 == 0 ? "" : "bg-light"
                 }`}
               >
-                <div class="text-monospace col-1 border-right">
-                  [{m.direction.toUpperCase()}]{" "}
-                  {m.timestamp.toLocaleTimeString()}
+                <div
+                  class="text-start text-monospace col-auto border-right"
+                  style="width: 150px;"
+                >
+                  [{m.direction}] {m.timestamp.toLocaleTimeString()}
                 </div>
-                <div class="col text-start">{m.message}</div>
-                <Show when={m.direction === "in"}>
-                  <div class="col-1">
+                <div class="col col text-start">{m.message}</div>
+                <div class="col-auto" style="width: 200px;">
+                  <Show when={m.direction === "RX"}>
                     <a
                       href="#"
                       onClick={() => {
@@ -175,15 +152,13 @@ const Log: Component = (props) => {
                     >
                       copy
                     </a>
-                  </div>
-                </Show>
-                <Show when={m.direction === "out"}>
-                  <div class="col-1">
+                  </Show>
+                  <Show when={m.direction === "TX"}>
                     <a href="#" onClick={() => props.sendSerial(m.message)}>
                       resend
                     </a>
-                  </div>
-                </Show>
+                  </Show>
+                </div>
               </li>
             );
           }}

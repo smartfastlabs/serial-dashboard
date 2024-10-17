@@ -51,7 +51,7 @@ const MyChart = (props) => {
   };
 
   function getData(metrics) {
-    const startTime = metrics[0].timestamp;
+    const startTime = metrics.length ? metrics[0].timestamp : Date.now();
     const data = Array(series.length);
     for (let i = 0; i < series.length; i++) {
       data[i] = Array(metrics.length);

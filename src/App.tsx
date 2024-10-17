@@ -1,4 +1,4 @@
-import { createSignal, Component, For, onMount } from "solid-js";
+import { createEffect, createSignal, Component, For, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
 import { SplitPane } from "solid-split-pane";
@@ -23,7 +23,7 @@ function getMetric(event) {
 function getMessage(event) {
   return {
     message: event.detail,
-    direction: "in",
+    direction: "RX",
     timestamp: new Date(),
   };
 }
@@ -39,19 +39,33 @@ const App: Component = () => {
   const [showDashboard, setShowDashboard] = createSignal(false);
   const [showEditor, setShowEditor] = createSignal(false);
   const [showMetrics, setShowMetrics] = createSignal(false);
+  const [pausedAt, setPausedAt] = createSignal(null);
+  const messageBuffer = [];
   let serial;
 
   async function updateConfig(config) {
     console.log("Updating Config: ", config);
   }
 
+  createEffect(() => {
+    if (!pausedAt) {
+      for (let message of messageBuffer) {
+        readSerial(message);
+      }
+      messageBuffer.length = 0;
+    }
+  });
+
   async function readSerial(event) {
     if (!event) return;
+    if (pausedAt()) {
+      return messageBuffer.push(event);
+    }
     if ((event.detail.match(/>/g) || []).length == 1) {
       const metric = getMetric(event);
       setMetrics((current) => {
-        if (current.length > 25000) {
-          current = current.slice(-20000);
+        if (current.length > 15000) {
+          current = current.slice(-10000);
         }
         return [...current, metric];
       });
@@ -80,7 +94,7 @@ const App: Component = () => {
     await serial.sendSerial(value);
     setMessages((current) => [
       ...current,
-      { message: value, timestamp: new Date(), direction: "out" },
+      { message: value, timestamp: new Date(), direction: "RX" },
     ]);
   }
 
@@ -174,6 +188,8 @@ const App: Component = () => {
         setShowEditor={setShowEditor}
         showMetrics={showMetrics}
         setShowMetrics={setShowMetrics}
+        pausedAt={pausedAt}
+        setPausedAt={setPausedAt}
       />
       <div class={styles.App}>
         {createSplitPane(

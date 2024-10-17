@@ -20,30 +20,6 @@ const Header: Component = (props) => {
           <span class="text-danger">[ALPHA]</span> Serial Dashboard
         </a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <Show when={props.isConnected()}>
-              <li class="nav-item">
-                <button
-                  class="btn btn-outline-success"
-                  onClick={props.clearData}
-                >
-                  Clear
-                </button>
-              </li>
-            </Show>
-            <li class="nav-item">
-              <Show when={props.isConnected()}>
-                <a class="nav-link active" aria-current="page">
-                  Connected
-                </a>
-              </Show>
-              <Show when={!props.isConnected()}>
-                <a class="nav-link disabled" aria-disabled="true">
-                  Disconnected
-                </a>
-              </Show>
-            </li>
-          </ul>
           <div class="ms-3 form-check form-switch">
             <input
               class="form-check-input"
@@ -95,12 +71,38 @@ const Header: Component = (props) => {
           <Show
             when={!props.isConnected()}
             fallback={
-              <button
-                class="btn btn-outline-success mx-2"
-                onclick={props.disconnect}
-              >
-                Disconnect
-              </button>
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <button
+                    class="btn btn-outline-success"
+                    onClick={props.clearData}
+                  >
+                    Clear
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="btn btn-outline-success"
+                    onClick={props.clearData}
+                  >
+                    Clear
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="btn btn-outline-success"
+                    onClick={() => {
+                      if (props.pausedAt()) {
+                        props.setPausedAt(null);
+                      } else {
+                        props.setPausedAt(Date.now());
+                      }
+                    }}
+                  >
+                    Pause
+                  </button>
+                </li>
+              </ul>
             }
           >
             <div class="dropdown mx-2">
