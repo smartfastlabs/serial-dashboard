@@ -48,11 +48,11 @@ const Header: Component = (props) => {
             <input
               class="form-check-input"
               type="checkbox"
-              id="flexSwitchCheckDefault"
+              id="showDashboardCheckbox"
               onChange={(e) => props.setShowDashboard(e.target.checked)}
               checked={props.showDashboard()}
             />
-            <label class="form-check-label" for="flexSwitchCheckDefault">
+            <label class="form-check-label" for="showDashboardCheckbox">
               controller
             </label>
           </div>
@@ -60,11 +60,11 @@ const Header: Component = (props) => {
             <input
               class="form-check-input"
               type="checkbox"
-              id="flexSwitchCheckChecked"
+              id="showEditorCheckbox"
               onChange={(e) => props.setShowEditor(e.target.checked)}
               checked={props.showEditor()}
             />
-            <label class="form-check-label" for="flexSwitchCheckChecked">
+            <label class="form-check-label" for="showEditorCheckbox">
               configurator
             </label>
           </div>
@@ -72,12 +72,24 @@ const Header: Component = (props) => {
             <input
               class="form-check-input"
               type="checkbox"
-              id="flexSwitchCheckDisabled"
+              id="showSerialMonitorCheckbox"
               onchange={(e) => props.setShowSerialMonitor(e.target.checked)}
               checked={props.showSerialMonitor()}
             />
-            <label class="form-check-label" for="flexSwitchCheckDisabled">
+            <label class="form-check-label" for="showSerialMonitorCheckbox">
               monitor
+            </label>
+          </div>
+          <div class="ms-3 form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="showMetricsCheckbox"
+              onchange={(e) => props.setShowMetrics(e.target.checked)}
+              checked={props.showMetrics()}
+            />
+            <label class="form-check-label" for="showMetricsCheckbox">
+              metrics
             </label>
           </div>
           <Show when={!props.isConnected()}>

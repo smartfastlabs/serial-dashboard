@@ -20,7 +20,6 @@ const Log: Component = (props) => {
     let m = props.messages();
     if (messageContainer) {
       if (lockBottom()) {
-        console.log("scrolling to bottom");
         messageContainer.scrollTo({
           top: 1000000000,
         });
@@ -32,15 +31,10 @@ const Log: Component = (props) => {
     if (lockBottom()) {
       setPauseMessagesAt(null);
     } else {
-      console.log("setPaushMessagesAt");
       setPauseMessagesAt(new Date());
     }
   });
 
-  createEffect(() => {
-    console.log("sendNewLine", sendNewLine());
-  });
-  console.log("LOGS COMPONENT", props);
   return (
     <div class="vh-100 w-100 container-fluid overflow-hidden">
       <div class="row bg-white w-100" style="margin-top: 60px">
