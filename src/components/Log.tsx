@@ -65,7 +65,7 @@ const Log: Component = (props) => {
               type="button"
               onClick={sendSerial}
             >
-              Send
+              Send <i class="fas fa-paper-plane"></i>
             </button>
           </div>
         </div>

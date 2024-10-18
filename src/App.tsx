@@ -50,6 +50,7 @@ const App: Component = () => {
   createEffect(() => {
     if (!pausedAt) {
       for (let message of messageBuffer) {
+        // TODO: WE NEED TO TRACK RECEIVED AT ACCURATLY
         readSerial(message);
       }
       messageBuffer.length = 0;
