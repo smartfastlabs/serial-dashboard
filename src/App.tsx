@@ -95,7 +95,6 @@ const App: Component = () => {
           }
         }
         //TODO: USE PRODUCE
-        console.log("PPP", metric);
         return [...current, metric];
       });
     } else {
@@ -148,7 +147,12 @@ const App: Component = () => {
           class="vh-100 overflow-scroll"
           style="height: calc(100% - 200px); padding-bottom: 60px; padding-top: 60px"
         >
-          <Item metrics={metrics} sendSerial={sendSerial} {...config().root} />
+          <Item
+            metricStore={metricStore}
+            metrics={metrics}
+            sendSerial={sendSerial}
+            {...config().root}
+          />
         </div>
       );
     }

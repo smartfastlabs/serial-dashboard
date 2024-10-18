@@ -12,6 +12,7 @@ const Container: Component = (props) => {
         <For each={props.children}>
           {(item, i) => (
             <Item
+              metricStore={props.metricStore}
               metrics={props.metrics}
               sendSerial={props.sendSerial}
               {...{ ...props.defaults, ...item }}

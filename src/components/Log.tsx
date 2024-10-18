@@ -82,7 +82,7 @@ const Log: Component = (props) => {
               class="fw-bold float-start form-check-label"
               for="showOutgoingCheckbox"
             >
-              Show Outgoing
+              Show TX
             </label>
           </div>
           <div class="col-2 form-check form-check-inline">

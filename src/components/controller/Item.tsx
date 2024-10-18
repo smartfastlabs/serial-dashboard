@@ -3,8 +3,10 @@ import Container from "./Container";
 import Button from "./Button";
 import Metric from "./Metric";
 import MyChart from "./Chart";
+import MetricsGuage from "../metrics/Guage";
 
 const Item: Component = (props) => {
+  console.log("ITEM COMPONENT", props);
   return (
     <Switch fallback={<h4>{props.name}</h4>}>
       <Match when={props.type === "container"}>
@@ -14,7 +16,7 @@ const Item: Component = (props) => {
         <Button {...props} />
       </Match>
       <Match when={props.type === "metric"}>
-        <Metric metrics={props.metrics} metric={props} />
+        <MetricsGuage metric={props} metricStore={props.metricStore} />
       </Match>
       <Match when={props.type === "chart"}>
         <MyChart metrics={props.metrics} chart={props} />
