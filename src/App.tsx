@@ -16,7 +16,7 @@ function getMetric(event) {
   return {
     key: data[0],
     value: parseFloat(data[1]),
-    timestamp: new Date(),
+    timestamp: event.timestamp || new Date(),
   };
 }
 
@@ -24,7 +24,7 @@ function getMessage(event) {
   return {
     message: event.detail,
     direction: "RX",
-    timestamp: new Date(),
+    timestamp: event.timestamp || new Date(),
   };
 }
 
@@ -48,9 +48,10 @@ const App: Component = () => {
   }
 
   createEffect(() => {
-    if (!pausedAt) {
+    if (!pausedAt()) {
       for (let message of messageBuffer) {
         // TODO: WE NEED TO TRACK RECEIVED AT ACCURATLY
+        console.log(message);
         readSerial(message);
       }
       messageBuffer.length = 0;
@@ -60,7 +61,10 @@ const App: Component = () => {
   async function readSerial(event) {
     if (!event) return;
     if (pausedAt()) {
-      return messageBuffer.push(event);
+      return messageBuffer.push({
+        timestamp: new Date(),
+        detail: event.detail,
+      });
     }
     if ((event.detail.match(/>/g) || []).length == 1) {
       const metric = getMetric(event);
@@ -74,10 +78,24 @@ const App: Component = () => {
         if (!metric) return current;
         for (let currentValue of current) {
           if (currentValue && currentValue.key === metric.key) {
-            return current.map((m) => (m.key === metric.key ? metric : m));
+            return current.map((m) =>
+              m.key === metric.key
+                ? {
+                    timestamp: new Date(),
+                    changeDirection:
+                      metric.value == m.value
+                        ? m.changeDirection
+                        : metric.value > m.value
+                        ? "up"
+                        : "down",
+                    ...metric,
+                  }
+                : m
+            );
           }
         }
         //TODO: USE PRODUCE
+        console.log("PPP", metric);
         return [...current, metric];
       });
     } else {

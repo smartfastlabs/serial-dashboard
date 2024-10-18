@@ -1,11 +1,10 @@
-import { Switch, Match, Component } from "solid-js";
-import MetricsGuage from "./Guage";
+import { Switch, Match, Component, Show } from "solid-js";
+import MyChart from "../Controller/Chart";
 
 function getMetrics(metrics) {
   if (!metrics) return [];
   const temp = {};
   for (let m of metrics) {
-    console.log(m);
     temp[m.key] = m.value;
   }
 
@@ -19,14 +18,57 @@ function getMetrics(metrics) {
 }
 
 const MetricsOverview: Component = (props) => {
-  console.log("METRICS OVERVIEW", props);
   return (
-    <div style="margin-top: 80px">
-      <For each={props.metricStore}>
-        {(metric, i) => {
-          return <MetricsGuage {...metric} />;
-        }}
-      </For>
+    <div class="container" style="margin-top: 60px;">
+      <div class="card">
+        <div class="card-header">
+          <h4>Metrics Overview</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <For each={props.metricStore}>
+              {(metric, i) => {
+                return (
+                  <>
+                    <div class="col-12 mb-3">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="fw-bold metric-name">{metric.key}</div>
+                        <div class="metric-timestamp">
+                          {metric.timestamp.toLocaleTimeString()}
+                        </div>
+                        <div class="metric-value d-flex align-items-center">
+                          <span>{metric.value}</span>
+                          <Show when={metric.changeDirection == "up"}>
+                            <i class="fas fa-arrow-up text-success ms-2"></i>
+                          </Show>
+                          <Show when={metric.changeDirection == "down"}>
+                            <i class="fas fa-arrow-down text-danger ms-2"></i>
+                          </Show>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <MyChart
+                        metrics={props.metrics}
+                        chart={{
+                          type: "chart",
+                          name: metric.key,
+                          dataSets: [
+                            {
+                              name: metric.key,
+                              key: metric.key,
+                            },
+                          ],
+                        }}
+                      />
+                    </div>
+                  </>
+                );
+              }}
+            </For>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
