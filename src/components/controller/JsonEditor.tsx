@@ -85,7 +85,10 @@ const JsonEditor: Component = (props) => {
     });
   });
   return (
-    <div class="text-start vh-100" style="margin-top: 60px">
+    <div
+      class="text-start overflow-scroll"
+      style="margin-top: 60px; height: calc(100% - 110px);"
+    >
       <input ref={fileInput} class="d-none" type="file" onChange={openFile} />
       <div ref={container}></div>
     </div>

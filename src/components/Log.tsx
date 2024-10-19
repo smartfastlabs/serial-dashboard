@@ -16,7 +16,7 @@ const Log: Component = (props) => {
       messages = messages.filter((m) => m.direction === "RX");
     }
 
-    return messages.slice(-100);
+    return messages.slice(-500);
   }
 
   function sendSerial() {
@@ -32,8 +32,9 @@ const Log: Component = (props) => {
   }
 
   createEffect(() => {
-    let m = props.messages();
-    if (messageContainer) {
+    console.log("scrolling", props.pausedAt());
+    let m = props.messages.length;
+    if (messageContainer && !props.pausedAt()) {
       messageContainer.scrollTo({
         top: 1000000000,
       });
@@ -122,9 +123,7 @@ const Log: Component = (props) => {
         style="height: calc(100% - 220px);"
         ref={messageContainer}
       >
-        <For
-          each={getMessages(props.messages && props.messages(), showOutgoing())}
-        >
+        <For each={getMessages(props.messages)}>
           {(m, i) => {
             return (
               <li

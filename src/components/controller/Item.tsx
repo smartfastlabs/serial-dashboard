@@ -1,7 +1,6 @@
 import { Switch, Match, Component } from "solid-js";
 import Container from "./Container";
 import Button from "./Button";
-import Metric from "./Metric";
 import MyChart from "./Chart";
 import MetricsGuage from "../metrics/Guage";
 

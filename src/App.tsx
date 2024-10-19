@@ -1,4 +1,5 @@
 import { createEffect, createSignal, Component, For, onMount } from "solid-js";
+import { produce } from "solid-js/store";
 import { createStore } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
 import { SplitPane } from "solid-split-pane";
@@ -32,7 +33,7 @@ const App: Component = () => {
   const [config, setConfig] = makePersisted(createSignal({ root: {} }));
   const [metricStore, setMetricStore] = createStore([]);
   const [metrics, setMetrics] = createSignal([]);
-  const [messages, setMessages] = createSignal([]);
+  const [messages, setMessages] = createStore([]);
   const [baudRate, setBaudRate] = createSignal(115200);
   const [isConnected, setIsConnected] = createSignal(false);
   const [showSerialMonitor, setShowSerialMonitor] = createSignal(true);
@@ -60,7 +61,7 @@ const App: Component = () => {
 
   async function readSerial(event) {
     if (!event) return;
-    if (pausedAt()) {
+    if (false && pausedAt()) {
       return messageBuffer.push({
         timestamp: new Date(),
         detail: event.detail,
@@ -98,13 +99,15 @@ const App: Component = () => {
         return [...current, metric];
       });
     } else {
-      setMessages((current) => {
-        if (current.length > 10000) {
-          current = current.slice(-8000);
-        }
-        //TODO: USE PRODUCE
-        return [...current, getMessage(event)];
-      });
+      setMessages(
+        produce((messages) => {
+          if (messages.length > 10000) {
+            messages.splice(0, 2000);
+          }
+          messages.push(getMessage(event));
+          return [...messages];
+        })
+      );
     }
   }
 
@@ -168,7 +171,11 @@ const App: Component = () => {
     if (serial) {
       children.push(
         <div class="vh-100 container-fluid p-0">
-          <Log sendSerial={sendSerial} messages={messages} />
+          <Log
+            pausedAt={pausedAt}
+            sendSerial={sendSerial}
+            messages={messages}
+          />
         </div>
       );
     }
