@@ -1,5 +1,5 @@
 import { createSignal, Component, Show } from "solid-js";
-import MyChart from "../Controller/Chart";
+import MyChart from "../controller/Chart";
 import { M } from "vite/dist/node/types.d-aGj9QkWt";
 
 function getMetrics(metrics) {
