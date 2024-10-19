@@ -61,7 +61,7 @@ const App: Component = () => {
 
   async function readSerial(event) {
     if (!event) return;
-    if (false && pausedAt()) {
+    if (pausedAt()) {
       return messageBuffer.push({
         timestamp: new Date(),
         detail: event.detail,

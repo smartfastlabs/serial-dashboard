@@ -3,10 +3,10 @@ import { createEffect } from "solid-js";
 
 const Log: Component = (props) => {
   const [sendValue, setSendValue] = createSignal("");
+  const [scrollLock, setScrollLock] = createSignal(true);
   const [sendNewLine, setSendNewLine] = createSignal(true);
   const [sendCarriageReturn, setSendCarriageReturn] = createSignal("");
   const [showOutgoing, setShowOutgoing] = createSignal(true);
-  const [filters, setFilters] = createSignal([]);
 
   let messageContainer = null;
 
@@ -33,7 +33,7 @@ const Log: Component = (props) => {
 
   createEffect(() => {
     let m = props.messages.length;
-    if (messageContainer && !props.pausedAt()) {
+    if (messageContainer && scrollLock()) {
       messageContainer.scrollTo({
         top: 1000000000,
       });
@@ -70,7 +70,22 @@ const Log: Component = (props) => {
           </div>
         </div>
         <div class="row ps-4">
-          <div class="col-2 form-check form-check-inline">
+          <div class="col form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="scrollLockCheckbox"
+              checked={scrollLock()}
+              onChange={(e) => setScrollLock(e.target.checked)}
+            />
+            <label
+              class="fw-bold float-start form-check-label"
+              for="scrollLockCheckbox"
+            >
+              Scroll Lock
+            </label>
+          </div>
+          <div class="col form-check form-check-inline">
             <input
               class="form-check-input"
               type="checkbox"
@@ -85,7 +100,7 @@ const Log: Component = (props) => {
               Show TX
             </label>
           </div>
-          <div class="col-2 form-check form-check-inline">
+          <div class="col form-check form-check-inline">
             <input
               class="form-check-input"
               type="checkbox"
@@ -100,7 +115,7 @@ const Log: Component = (props) => {
               Send \n
             </label>
           </div>
-          <div class="col-2 form-check form-check-inline">
+          <div class="col form-check form-check-inline">
             <input
               class="form-check-input"
               type="checkbox"
@@ -118,7 +133,9 @@ const Log: Component = (props) => {
         </div>
       </div>
       <ul
-        class={`list-group overflow-scroll`}
+        class={`list-group ${
+          scrollLock() ? "overflow-hidden" : "overflow-scroll"
+        }`}
         style="height: calc(100% - 220px);"
         ref={messageContainer}
       >
