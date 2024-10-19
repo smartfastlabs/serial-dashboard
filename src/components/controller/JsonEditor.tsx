@@ -1,11 +1,14 @@
-import { Component, onMount } from "solid-js";
+import { createEffect, Component, onMount } from "solid-js";
 import { createJSONEditor } from "vanilla-jsoneditor";
 import { faDownload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
-import { unwrap } from "solid-js/store";
 
 const JsonEditor: Component = (props) => {
-  const jsonIn = unwrap(props.config);
-  console.log("JSON IN", jsonIn, props.config);
+  const options = {};
+  let container;
+  let editor;
+  let fileInput;
+  let content = { json: props.config };
+
   async function saveFile() {
     const fileHandle = await window.showSaveFilePicker({
       suggestedName: "serial-dashboard.json",
@@ -36,7 +39,7 @@ const JsonEditor: Component = (props) => {
     reader.onload = function (e) {
       try {
         let value = JSON.parse(e.target.result);
-        props.saveJSON(value);
+        props.saveJSON({ json: value });
         editor.set({ json: value });
       } catch (e) {
         console.log(e);
@@ -62,30 +65,38 @@ const JsonEditor: Component = (props) => {
     return menuItems;
   }
 
-  const options = {};
-  let container;
-  let editor;
-  let fileInput;
-  let content = { json: jsonIn };
   onMount(() => {
     editor = createJSONEditor({
       target: container,
       props: {
         content: content,
-        onChange: (
-          updatedContent,
-          previousContent,
-          { contentErrors, patchResult }
-        ) => {
+        onChange: (updatedContent, previousContent, { contentErrors }) => {
           if (contentErrors) {
             console.error(contentErrors);
+          } else if (updatedContent.json) {
+            console.log("SAVE JSON", updatedContent.json.config);
+            props.saveJSON(updatedContent.json);
           } else {
-            props.saveJSON(updatedContent.json || updatedContent.text);
+            console.error("No JSON");
           }
         },
         onRenderMenu: handleRenderMenu,
       },
     });
+  });
+  createEffect(() => {
+    console.log(
+      "REFRESH TOO",
+      props.config.config.showMetrics,
+      props.config.config.showSerialMonitor,
+      props.config.config.showDashboard
+    );
+    if (!editor) return;
+    console.log("REFRESH THREE", {
+      ...editor.json,
+      config: props.config.config,
+    });
+    editor.set({ json: { ...editor.json, config: props.config.config } });
   });
   return (
     <div

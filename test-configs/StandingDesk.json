@@ -1,6 +1,11 @@
 {
-  "variables": {},
-  "root": {
+  "config": {
+    "showDashboard": false,
+    "showEditor": true,
+    "showMetrics": true,
+    "showSerialMonitor": true
+  },
+  "controller": {
     "type": "container",
     "class": "container w-100",
     "children": [

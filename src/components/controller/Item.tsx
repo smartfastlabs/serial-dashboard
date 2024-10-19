@@ -6,7 +6,6 @@ import MetricsGuage from "../metrics/Guage";
 import Section from "./Section";
 
 const Item: Component = (props) => {
-  console.log("ITEM COMPONENT", props);
   return (
     <Switch fallback={<h4>{props.name}</h4>}>
       <Match when={props.type === "container"}>

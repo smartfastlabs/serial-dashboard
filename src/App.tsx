@@ -3,6 +3,7 @@ import { produce } from "solid-js/store";
 import { createStore } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
 import { SplitPane } from "solid-split-pane";
+import { unwrap } from "solid-js/store";
 import styles from "./App.module.css";
 import { WebSerialPort } from "./utils/WebSerial";
 import JsonEditor from "./components/controller/JsonEditor";
@@ -29,6 +30,18 @@ function getMessage(event) {
   };
 }
 
+function deepUnwrap(store) {
+  if (typeof store === "object" && store !== null) {
+    const unwrapped = {};
+    for (const key in store) {
+      unwrapped[key] = deepUnwrap(store[key]);
+    }
+    return unwrapped;
+  } else {
+    return store;
+  }
+}
+
 const App: Component = () => {
   const [configStore, setConfigStore] = makePersisted(createStore({}));
   const [metricStore, setMetricStore] = createStore([]);
@@ -41,15 +54,17 @@ const App: Component = () => {
   let serial;
 
   function saveJSON(json) {
-    console.log("Save, JSON", json);
-    if (typeof json == "string") {
-      json = JSON.parse(json);
-    } else {
-      json = JSON.parse(JSON.stringify(json));
-    }
-    console.log("Save, JSON", json);
-    setConfigStore(json);
-    console.log("Saved", configStore);
+    setConfigStore(
+      produce((current) => {
+        if (json.config) {
+          if (!current.config) {
+            current.config = {};
+          }
+          current.config = deepUnwrap(json.config);
+          current.controller = deepUnwrap(json.controller);
+        }
+      })
+    );
   }
 
   if (!configStore.controller) {
@@ -168,6 +183,37 @@ const App: Component = () => {
     setMessages([]);
   }
 
+  const splitPanePanels = {
+    dashboard: (
+      <div
+        class="vh-100 overflow-scroll"
+        style="height: calc(100% - 200px); padding-bottom: 60px; padding-top: 60px"
+      >
+        <Item
+          metricStore={metricStore}
+          metrics={metrics}
+          sendSerial={sendSerial}
+          {...configStore.controller}
+        />
+      </div>
+    ),
+    editor: (
+      <div class="vh-100 container-fluid p-0">
+        <JsonEditor saveJSON={saveJSON} config={configStore} />
+      </div>
+    ),
+    serial: (
+      <div class="vh-100 container-fluid p-0">
+        <Log pausedAt={pausedAt} sendSerial={sendSerial} messages={messages} />
+      </div>
+    ),
+    metrics: (
+      <div class="vh-100 container-fluid p-0">
+        <MetricsOverview metricStore={metricStore} metrics={metrics} />
+      </div>
+    ),
+  };
+
   function createSplitPane(
     connected,
     _showSerial,
@@ -179,47 +225,19 @@ const App: Component = () => {
     console.log("Creating Split Pane", configStore, _showSerial);
 
     if (_showDashboard) {
-      children.push(
-        <div
-          class="vh-100 overflow-scroll"
-          style="height: calc(100% - 200px); padding-bottom: 60px; padding-top: 60px"
-        >
-          <Item
-            metricStore={metricStore}
-            metrics={metrics}
-            sendSerial={sendSerial}
-            {...configStore.controller}
-          />
-        </div>
-      );
+      children.push(splitPanePanels.dashboard);
     }
 
     if (_showEditor) {
-      children.push(
-        <div class="vh-100 container-fluid p-0">
-          <JsonEditor saveJSON={saveJSON} config={configStore} />
-        </div>
-      );
+      children.push(splitPanePanels.editor);
     }
 
     if (_showSerial) {
-      children.push(
-        <div class="vh-100 container-fluid p-0">
-          <Log
-            pausedAt={pausedAt}
-            sendSerial={sendSerial}
-            messages={messages}
-          />
-        </div>
-      );
+      children.push(splitPanePanels.serial);
     }
 
     if (_showMetrics) {
-      children.push(
-        <div class="vh-100 container-fluid p-0">
-          <MetricsOverview metricStore={metricStore} metrics={metrics} />
-        </div>
-      );
+      children.push(splitPanePanels.metrics);
     }
 
     console.log("Children", children);
