@@ -1,8 +1,11 @@
 import { Component, onMount } from "solid-js";
 import { createJSONEditor } from "vanilla-jsoneditor";
 import { faDownload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
+import { unwrap } from "solid-js/store";
 
 const JsonEditor: Component = (props) => {
+  const jsonIn = unwrap(props.config);
+  console.log("JSON IN", jsonIn, props.config);
   async function saveFile() {
     const fileHandle = await window.showSaveFilePicker({
       suggestedName: "serial-dashboard.json",
@@ -19,7 +22,7 @@ const JsonEditor: Component = (props) => {
 
     const writable = await fileHandle.createWritable();
     console.log(editor.json);
-    const value = JSON.stringify(props.config(), null, 2);
+    const value = JSON.stringify(editor.json, null, 2);
     console.log("SAVE", value);
     await writable.write(value);
     await writable.close();
@@ -33,7 +36,7 @@ const JsonEditor: Component = (props) => {
     reader.onload = function (e) {
       try {
         let value = JSON.parse(e.target.result);
-        props.setConfig(value);
+        props.saveJSON(value);
         editor.set({ json: value });
       } catch (e) {
         console.log(e);
@@ -63,7 +66,7 @@ const JsonEditor: Component = (props) => {
   let container;
   let editor;
   let fileInput;
-  let content = { json: props.config() };
+  let content = { json: jsonIn };
   onMount(() => {
     editor = createJSONEditor({
       target: container,
@@ -77,7 +80,7 @@ const JsonEditor: Component = (props) => {
           if (contentErrors) {
             console.error(contentErrors);
           } else {
-            props.setConfig(updatedContent.json);
+            props.saveJSON(updatedContent.json || updatedContent.text);
           }
         },
         onRenderMenu: handleRenderMenu,

@@ -13,8 +13,8 @@ const ViewControls: Component = (props) => {
           class="form-check-input"
           type="checkbox"
           id="showDashboardCheckbox"
-          onChange={(e) => props.setShowDashboard(e.target.checked)}
-          checked={props.showDashboard()}
+          onChange={(e) => props.setConfig("showDashboard", e.target.checked)}
+          checked={props.config.showDashboard}
         />
         <label class="form-check-label" for="showDashboardCheckbox">
           controller
@@ -25,8 +25,8 @@ const ViewControls: Component = (props) => {
           class="form-check-input"
           type="checkbox"
           id="showEditorCheckbox"
-          onChange={(e) => props.setShowEditor(e.target.checked)}
-          checked={props.showEditor()}
+          onChange={(e) => props.setConfig("showEditor", e.target.checked)}
+          checked={props.config.showEditor}
         />
         <label class="form-check-label" for="showEditorCheckbox">
           configurator
@@ -37,8 +37,10 @@ const ViewControls: Component = (props) => {
           class="form-check-input"
           type="checkbox"
           id="showSerialMonitorCheckbox"
-          onchange={(e) => props.setShowSerialMonitor(e.target.checked)}
-          checked={props.showSerialMonitor()}
+          onChange={(e) =>
+            props.setConfig("showSerialMonitor", e.target.checked)
+          }
+          checked={props.config.showSerialMonitor}
         />
         <label class="form-check-label" for="showSerialMonitorCheckbox">
           monitor
@@ -49,8 +51,8 @@ const ViewControls: Component = (props) => {
           class="form-check-input"
           type="checkbox"
           id="showMetricsCheckbox"
-          onchange={(e) => props.setShowMetrics(e.target.checked)}
-          checked={props.showMetrics()}
+          onChange={(e) => props.setConfig("showMetrics", e.target.checked)}
+          checked={props.config.showMetrics}
         />
         <label class="form-check-label" for="showMetricsCheckbox">
           metrics

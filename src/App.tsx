@@ -30,24 +30,52 @@ function getMessage(event) {
 }
 
 const App: Component = () => {
-  const [config, setConfig] = makePersisted(createSignal({ root: {} }));
+  const [configStore, setConfigStore] = makePersisted(createStore({}));
   const [metricStore, setMetricStore] = createStore([]);
   const [metrics, setMetrics] = createStore([]);
   const [messages, setMessages] = createStore([]);
   const [baudRate, setBaudRate] = createSignal(115200);
   const [isConnected, setIsConnected] = createSignal(false);
-  const [showSerialMonitor, setShowSerialMonitor] = createSignal(true);
-  const [showDashboard, setShowDashboard] = createSignal(false);
-  const [showEditor, setShowEditor] = createSignal(false);
-  const [showMetrics, setShowMetrics] = createSignal(false);
   const [pausedAt, setPausedAt] = createSignal(null);
   const messageBuffer = [];
   let serial;
 
-  async function updateConfig(config) {
-    console.log("Updating Config: ", config);
+  function saveJSON(json) {
+    console.log("Save, JSON", json);
+    if (typeof json == "string") {
+      json = JSON.parse(json);
+    } else {
+      json = JSON.parse(JSON.stringify(json));
+    }
+    console.log("Save, JSON", json);
+    setConfigStore(json);
+    console.log("Saved", configStore);
   }
 
+  if (!configStore.controller) {
+    setConfigStore((current) => {
+      current.controller = {};
+    });
+  }
+  if (!configStore.config) {
+    setConfigStore((current) => {
+      current.config = {
+        showDashboard: false,
+        showEditor: false,
+        showMetrics: false,
+        showSerialMonitor: true,
+      };
+    });
+  }
+
+  function setConfig(key, value) {
+    setConfigStore(
+      produce((current) => {
+        current.config[key] = value;
+        console.log("Set Config", current.config);
+      })
+    );
+  }
   createEffect(() => {
     if (!pausedAt()) {
       for (let message of messageBuffer) {
@@ -142,12 +170,13 @@ const App: Component = () => {
 
   function createSplitPane(
     connected,
-    serial,
+    _showSerial,
     _showDashboard,
     _showEditor,
     _showMetrics
   ) {
     const children = [];
+    console.log("Creating Split Pane", configStore, _showSerial);
 
     if (_showDashboard) {
       children.push(
@@ -159,7 +188,7 @@ const App: Component = () => {
             metricStore={metricStore}
             metrics={metrics}
             sendSerial={sendSerial}
-            {...config().root}
+            {...configStore.controller}
           />
         </div>
       );
@@ -168,12 +197,12 @@ const App: Component = () => {
     if (_showEditor) {
       children.push(
         <div class="vh-100 container-fluid p-0">
-          <JsonEditor setConfig={setConfig} config={config} />
+          <JsonEditor saveJSON={saveJSON} config={configStore} />
         </div>
       );
     }
 
-    if (serial) {
+    if (_showSerial) {
       children.push(
         <div class="vh-100 container-fluid p-0">
           <Log
@@ -193,6 +222,7 @@ const App: Component = () => {
       );
     }
 
+    console.log("Children", children);
     return (
       <SplitPane gutterClass="gutter gutter-vertical bg-light">
         <For each={children}>{(child) => child}</For>
@@ -215,24 +245,18 @@ const App: Component = () => {
         setBaudRate={setBaudRate}
         clearData={clearData}
         sendSerial={sendSerial}
-        showSerialMonitor={showSerialMonitor}
-        setShowSerialMonitor={setShowSerialMonitor}
-        showDashboard={showDashboard}
-        setShowDashboard={setShowDashboard}
-        showEditor={showEditor}
-        setShowEditor={setShowEditor}
-        showMetrics={showMetrics}
-        setShowMetrics={setShowMetrics}
+        config={configStore.config}
+        setConfig={setConfig}
         pausedAt={pausedAt}
         setPausedAt={setPausedAt}
       />
       <div class={styles.App}>
         {createSplitPane(
           isConnected(),
-          showSerialMonitor(),
-          showDashboard(),
-          showEditor(),
-          showMetrics()
+          configStore.config.showSerialMonitor,
+          configStore.config.showDashboard,
+          configStore.config.showEditor,
+          configStore.config.showMetrics
         )}
       </div>
       <Footer />
