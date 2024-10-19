@@ -19,7 +19,7 @@ void loop() {
 
 // send the seconds as a JSON string
 // every 10 seconds:
-  if (millis() - lastSecond > 20) {
+  if (millis() - lastSecond > 250) {
     Serial.print(">84-position-1:");
     Serial.println(millis() / 1000);
     Serial.println("OH HEY");

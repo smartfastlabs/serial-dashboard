@@ -95,11 +95,11 @@ const MyChart = (props) => {
 
   onMount(() => {
     observe(chartContainer);
-    plot = new uPlot(options, getData(props.metrics()), chartContainer);
+    plot = new uPlot(options, getData(props.metrics), chartContainer);
   });
 
   createEffect(() => {
-    plot.setData(getData(props.metrics()));
+    plot.setData(getData(props.metrics));
   });
 
   return <div class="w-100" ref={chartContainer}></div>;

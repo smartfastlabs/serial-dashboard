@@ -1,5 +1,6 @@
 import { createSignal, Component, Show } from "solid-js";
 import MyChart from "../Controller/Chart";
+import { M } from "vite/dist/node/types.d-aGj9QkWt";
 
 function getMetrics(metrics) {
   if (!metrics) return [];
@@ -18,19 +19,31 @@ function getMetrics(metrics) {
 }
 
 const MetricRow: Component = (props) => {
-  const [expanded, setExpanded] = createSignal(Boolean(props.expanded));
+  const [expanded, setExpanded] = createSignal(props.expanded);
   return (
     <>
-      <div
-        onClick={() => {
-          console.log("expand");
-          setExpanded(!expanded());
-        }}
-        class="col-12 mb-3"
-      >
+      <div class="col-12 mb-3">
         <div class="d-flex justify-content-between align-items-center">
           <div class="fw-bold metric-name">{props.metric.key}</div>
-          <div class="metric-timestamp">
+          <a
+            href="#"
+            onClick={() => {
+              console.log("expand");
+              setExpanded(!expanded());
+              props.setExpanded(expanded());
+            }}
+            class="metric-timestamp"
+          >
+            GRAPH
+          </a>
+          <div
+            onClick={() => {
+              console.log("expand");
+              setExpanded(!expanded());
+              props.setExpanded(expanded());
+            }}
+            class="metric-timestamp"
+          >
             {props.metric.timestamp.toLocaleTimeString()}
           </div>
           <div class="metric-value d-flex align-items-center">
@@ -67,6 +80,7 @@ const MetricRow: Component = (props) => {
 };
 
 const MetricsOverview: Component = (props) => {
+  const [expandedRows, setExpandedRows] = createSignal([]);
   return (
     <div class="container" style="margin-top: 60px;">
       <div class="card">
@@ -77,7 +91,31 @@ const MetricsOverview: Component = (props) => {
           <div class="row">
             <For each={props.metricStore}>
               {(metric, i) => {
-                return <MetricRow metric={metric} metrics={props.metrics} />;
+                return (
+                  <MetricRow
+                    expanded={expandedRows().includes(metric.key)}
+                    setExpanded={(expanded) => {
+                      console.log(
+                        "setExpanded",
+                        expanded,
+                        expandedRows(),
+                        expandedRows().includes(metric.key)
+                      );
+                      if (!expanded && expandedRows().includes(metric.key)) {
+                        setExpandedRows(
+                          expandedRows().filter((k) => k !== metric.key)
+                        );
+                      } else if (
+                        expanded &&
+                        !expandedRows().includes(metric.key)
+                      ) {
+                        setExpandedRows([...expandedRows(), metric.key]);
+                      }
+                    }}
+                    metric={metric}
+                    metrics={props.metrics}
+                  />
+                );
               }}
             </For>
           </div>

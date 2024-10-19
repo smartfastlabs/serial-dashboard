@@ -32,7 +32,7 @@ function getMessage(event) {
 const App: Component = () => {
   const [config, setConfig] = makePersisted(createSignal({ root: {} }));
   const [metricStore, setMetricStore] = createStore([]);
-  const [metrics, setMetrics] = createSignal([]);
+  const [metrics, setMetrics] = createStore([]);
   const [messages, setMessages] = createStore([]);
   const [baudRate, setBaudRate] = createSignal(115200);
   const [isConnected, setIsConnected] = createSignal(false);
@@ -69,12 +69,14 @@ const App: Component = () => {
     }
     if ((event.detail.match(/>/g) || []).length == 1) {
       const metric = getMetric(event);
-      setMetrics((current) => {
-        if (current.length > 15000) {
-          current = current.slice(-10000);
-        }
-        return [...current, metric];
-      });
+      setMetrics(
+        produce((current) => {
+          if (current.length > 15000) {
+            current.splice(0, 12500);
+          }
+          current.push(metric);
+        })
+      );
       setMetricStore((current) => {
         if (!metric) return current;
         for (let currentValue of current) {
