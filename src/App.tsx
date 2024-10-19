@@ -91,8 +91,8 @@ const App: Component = () => {
                   : "down";
               current[i].value = metric.value;
               console.log("LOOP", i, current[i].timestamp, new Date());
-              return;
               current[i].timestamp = new Date();
+              return;
             }
           }
           current.push(metric);
