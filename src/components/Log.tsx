@@ -32,7 +32,6 @@ const Log: Component = (props) => {
   }
 
   createEffect(() => {
-    console.log("scrolling", props.pausedAt());
     let m = props.messages.length;
     if (messageContainer && !props.pausedAt()) {
       messageContainer.scrollTo({

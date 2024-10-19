@@ -1,4 +1,4 @@
-import { Switch, Match, Component, Show } from "solid-js";
+import { createSignal, Component, Show } from "solid-js";
 import MyChart from "../Controller/Chart";
 
 function getMetrics(metrics) {
@@ -17,6 +17,55 @@ function getMetrics(metrics) {
   return output;
 }
 
+const MetricRow: Component = (props) => {
+  const [expanded, setExpanded] = createSignal(Boolean(props.expanded));
+  return (
+    <>
+      <div
+        onClick={() => {
+          console.log("expand");
+          setExpanded(!expanded());
+        }}
+        class="col-12 mb-3"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="fw-bold metric-name">{props.metric.key}</div>
+          <div class="metric-timestamp">
+            {props.metric.timestamp.toLocaleTimeString()}
+          </div>
+          <div class="metric-value d-flex align-items-center">
+            <span>{props.metric.value}</span>
+            <Show when={props.metric.changeDirection == "up"}>
+              <i class="fas fa-arrow-up text-success ms-2"></i>
+            </Show>
+            <Show when={props.metric.changeDirection == "down"}>
+              <i class="fas fa-arrow-down text-danger ms-2"></i>
+            </Show>
+          </div>
+        </div>
+      </div>
+      <Show when={expanded()}>
+        <div class="col-12">
+          <MyChart
+            metrics={props.metrics}
+            chart={{
+              type: "chart",
+              name: props.metric.key,
+              hidden: true,
+              dataSets: [
+                {
+                  name: props.metric.key,
+                  key: props.metric.key,
+                },
+              ],
+            }}
+          />
+        </div>
+      </Show>
+    </>
+  );
+};
+
 const MetricsOverview: Component = (props) => {
   return (
     <div class="container" style="margin-top: 60px;">
@@ -28,42 +77,7 @@ const MetricsOverview: Component = (props) => {
           <div class="row">
             <For each={props.metricStore}>
               {(metric, i) => {
-                return (
-                  <>
-                    <div class="col-12 mb-3">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="fw-bold metric-name">{metric.key}</div>
-                        <div class="metric-timestamp">
-                          {metric.timestamp.toLocaleTimeString()}
-                        </div>
-                        <div class="metric-value d-flex align-items-center">
-                          <span>{metric.value}</span>
-                          <Show when={metric.changeDirection == "up"}>
-                            <i class="fas fa-arrow-up text-success ms-2"></i>
-                          </Show>
-                          <Show when={metric.changeDirection == "down"}>
-                            <i class="fas fa-arrow-down text-danger ms-2"></i>
-                          </Show>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <MyChart
-                        metrics={props.metrics}
-                        chart={{
-                          type: "chart",
-                          name: metric.key,
-                          dataSets: [
-                            {
-                              name: metric.key,
-                              key: metric.key,
-                            },
-                          ],
-                        }}
-                      />
-                    </div>
-                  </>
-                );
+                return <MetricRow metric={metric} metrics={props.metrics} />;
               }}
             </For>
           </div>

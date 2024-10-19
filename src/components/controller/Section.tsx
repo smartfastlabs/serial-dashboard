@@ -3,7 +3,10 @@ import { createSignal } from "solid-js";
 function Section(props) {
   const [isExpanded, setIsExpanded] = createSignal(props.isExpanded);
 
-  const toggle = () => setIsExpanded(!isExpanded());
+  const toggle = () => {
+    console.log("toggle", isExpanded());
+    setIsExpanded(!isExpanded());
+  };
 
   return (
     <div class="">

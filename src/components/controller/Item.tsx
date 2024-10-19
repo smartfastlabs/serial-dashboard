@@ -18,7 +18,11 @@ const Item: Component = (props) => {
         <MetricsGuage metric={props} metricStore={props.metricStore} />
       </Match>
       <Match when={props.type === "chart"}>
-        <MyChart metrics={props.metrics} chart={props} />
+        <div class={props.chart.class}>
+          <Section isExpanded={!props.hidden} header={props.name}>
+            <MyChart metrics={props.metrics} chart={props} />
+          </Section>
+        </div>
       </Match>
     </Switch>
   );

@@ -102,13 +102,7 @@ const MyChart = (props) => {
     plot.setData(getData(props.metrics()));
   });
 
-  return (
-    <div class={props.chart.class}>
-      <Section isExpanded={!props.chart.hidden} header={props.chart.name}>
-        <div class="w-100" ref={chartContainer}></div>
-      </Section>
-    </div>
-  );
+  return <div class="w-100" ref={chartContainer}></div>;
 };
 
 export default MyChart;
