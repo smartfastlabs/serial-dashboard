@@ -68,38 +68,36 @@ const App: Component = () => {
       });
     }
     if ((event.detail.match(/>/g) || []).length == 1) {
-      const metric = getMetric(event);
       setMetrics(
         produce((current) => {
+          const metric = getMetric(event);
           if (current.length > 15000) {
             current.splice(0, 12500);
           }
           current.push(metric);
         })
       );
-      setMetricStore((current) => {
-        if (!metric) return current;
-        for (let currentValue of current) {
-          if (currentValue && currentValue.key === metric.key) {
-            return current.map((m) =>
-              m.key === metric.key
-                ? {
-                    timestamp: new Date(),
-                    changeDirection:
-                      metric.value == m.value
-                        ? m.changeDirection
-                        : metric.value > m.value
-                        ? "up"
-                        : "down",
-                    ...metric,
-                  }
-                : m
-            );
+      setMetricStore(
+        produce((current) => {
+          const metric = getMetric(event);
+          if (!metric) return current;
+          for (let i = 0; i < current.length; i++) {
+            if (current[i] && current[i].key === metric.key) {
+              current[i].changeDirection =
+                metric.value == current[i].value
+                  ? current[i].changeDirection
+                  : metric.value > current[i].value
+                  ? "up"
+                  : "down";
+              current[i].value = metric.value;
+              console.log("LOOP", i, current[i].timestamp, new Date());
+              return;
+              current[i].timestamp = new Date();
+            }
           }
-        }
-        //TODO: USE PRODUCE
-        return [...current, metric];
-      });
+          current.push(metric);
+        })
+      );
     } else {
       setMessages(
         produce((messages) => {

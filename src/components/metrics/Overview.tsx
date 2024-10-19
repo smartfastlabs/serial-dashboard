@@ -47,7 +47,7 @@ const MetricRow: Component = (props) => {
             {props.metric.timestamp.toLocaleTimeString()}
           </div>
           <div class="metric-value d-flex align-items-center">
-            <span>{props.metric.value}</span>
+            <span>{props.value}</span>
             <Show when={props.metric.changeDirection == "up"}>
               <i class="fas fa-arrow-up text-success ms-2"></i>
             </Show>
@@ -94,6 +94,7 @@ const MetricsOverview: Component = (props) => {
                 return (
                   <MetricRow
                     expanded={expandedRows().includes(metric.key)}
+                    value={metric.value}
                     setExpanded={(expanded) => {
                       console.log(
                         "setExpanded",
