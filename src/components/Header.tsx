@@ -138,7 +138,13 @@ const Header: Component = (props) => {
   return (
     <nav class="navbar fixed-top d-flex navbar-expand-lg bg-body-tertiary">
       <a class="fw-bold navbar-brand" href="#">
-        <span class="text-danger">[ALPHA]</span> Serial Dashboard
+        <h3 class="my-0 py-0 ms-3">Serial Dashboard</h3>
+        <small
+          class="text-danger fw-bold"
+          style="font-size: .8em; position: absolute; top: 10px; left: 200px; transform: rotate(25deg);"
+        >
+          ALPHA
+        </small>
       </a>
       <ViewControls {...props} />
       <SerialControls {...props} />

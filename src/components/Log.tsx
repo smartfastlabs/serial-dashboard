@@ -75,14 +75,14 @@ const Log: Component = (props) => {
               class="form-check-input"
               type="checkbox"
               id="scrollLockCheckbox"
-              checked={scrollLock()}
-              onChange={(e) => setScrollLock(e.target.checked)}
+              checked={!scrollLock()}
+              onChange={(e) => setScrollLock(!e.target.checked)}
             />
             <label
               class="fw-bold float-start form-check-label"
               for="scrollLockCheckbox"
             >
-              Scroll Lock
+              Scroll
             </label>
           </div>
           <div class="col form-check form-check-inline">
@@ -139,7 +139,7 @@ const Log: Component = (props) => {
         style="height: calc(100% - 220px);"
         ref={messageContainer}
       >
-        <For each={getMessages(props.messages)}>
+        <For each={getMessages(props.messages, showOutgoing())}>
           {(m, i) => {
             return (
               <li
@@ -151,7 +151,14 @@ const Log: Component = (props) => {
                   class="text-start text-monospace col-auto border-right"
                   style="width: 150px;"
                 >
-                  [{m.direction}] {m.timestamp.toLocaleTimeString()}
+                  <span
+                    class={`${
+                      m.direction === "RX" ? "text-primary" : "text-danger"
+                    }`}
+                  >
+                    [{m.direction}]
+                  </span>{" "}
+                  {m.timestamp.toLocaleTimeString()}
                 </div>
                 <div class="col col text-start">{m.message}</div>
                 <div class="col-auto" style="width: 200px;">

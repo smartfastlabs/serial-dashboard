@@ -113,10 +113,15 @@ const App: Component = () => {
 
   async function sendSerial(value) {
     await serial.sendSerial(value);
-    setMessages((current) => [
-      ...current,
-      { message: value, timestamp: new Date(), direction: "RX" },
-    ]);
+    setMessages(
+      produce((current) => {
+        current.push({
+          message: value,
+          timestamp: new Date(),
+          direction: "TX",
+        });
+      })
+    );
   }
 
   async function connect() {

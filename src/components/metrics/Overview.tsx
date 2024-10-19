@@ -1,6 +1,6 @@
 import { createSignal, Component, Show } from "solid-js";
+import { faPlusSquare, faMinusSquare } from "@fortawesome/free-solid-svg-icons";
 import MyChart from "../controller/Chart";
-import { M } from "vite/dist/node/types.d-aGj9QkWt";
 
 function getMetrics(metrics) {
   if (!metrics) return [];
@@ -24,7 +24,6 @@ const MetricRow: Component = (props) => {
     <>
       <div class="col-12 mb-3">
         <div class="d-flex justify-content-between align-items-center">
-          <div class="fw-bold metric-name">{props.metric.key}</div>
           <a
             href="#"
             onClick={() => {
@@ -34,7 +33,13 @@ const MetricRow: Component = (props) => {
             }}
             class="metric-timestamp"
           >
-            GRAPH
+            <Show when={expanded()}>
+              <i class="fas me-2 fa-minus-square"></i>
+            </Show>
+            <Show when={!expanded()}>
+              <i class="fas me-2 fa-plus-square"></i>
+            </Show>
+            {props.metric.key}
           </a>
           <div
             onClick={() => {
