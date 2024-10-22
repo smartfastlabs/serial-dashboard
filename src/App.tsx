@@ -1,9 +1,8 @@
 import { createEffect, createSignal, Component, For, onMount } from "solid-js";
 import { produce } from "solid-js/store";
-import { createStore } from "solid-js/store";
+import { createStore, reconcile } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
 import { SplitPane } from "solid-split-pane";
-import { unwrap } from "solid-js/store";
 import styles from "./App.module.css";
 import { WebSerialPort } from "./utils/WebSerial";
 import JsonEditor from "./components/controller/JsonEditor";
@@ -30,20 +29,10 @@ function getMessage(event) {
   };
 }
 
-function deepUnwrap(store) {
-  if (typeof store === "object" && store !== null) {
-    const unwrapped = {};
-    for (const key in store) {
-      unwrapped[key] = deepUnwrap(store[key]);
-    }
-    return unwrapped;
-  } else {
-    return store;
-  }
-}
-
 const App: Component = () => {
-  const [configStore, setConfigStore] = makePersisted(createStore({}));
+  const [configStore, setConfigStore] = makePersisted(createStore({}), {
+    name: "config",
+  });
   const [metricStore, setMetricStore] = createStore([]);
   const [metrics, setMetrics] = createStore([]);
   const [messages, setMessages] = createStore([]);
@@ -54,17 +43,9 @@ const App: Component = () => {
   let serial;
 
   function saveJSON(json) {
-    setConfigStore(
-      produce((current) => {
-        if (json.config) {
-          if (!current.config) {
-            current.config = {};
-          }
-          current.config = deepUnwrap(json.config);
-          current.controller = deepUnwrap(json.controller);
-        }
-      })
-    );
+    // TODO: BETTER WAY TO HANDLE THIS
+    setConfigStore("controller", reconcile(json.controller));
+    setConfigStore("config", reconcile(json.config));
   }
 
   if (!configStore.controller) {
@@ -87,15 +68,12 @@ const App: Component = () => {
     setConfigStore(
       produce((current) => {
         current.config[key] = value;
-        console.log("Set Config", current.config);
       })
     );
   }
   createEffect(() => {
     if (!pausedAt()) {
       for (let message of messageBuffer) {
-        // TODO: WE NEED TO TRACK RECEIVED AT ACCURATLY
-        console.log(message);
         readSerial(message);
       }
       messageBuffer.length = 0;
@@ -133,7 +111,6 @@ const App: Component = () => {
                   ? "up"
                   : "down";
               current[i].value = metric.value;
-              console.log("LOOP", i, current[i].timestamp, new Date());
               current[i].timestamp = new Date();
               return;
             }
@@ -193,7 +170,9 @@ const App: Component = () => {
           metricStore={metricStore}
           metrics={metrics}
           sendSerial={sendSerial}
-          {...configStore.controller}
+          type="container"
+          name="Dashboard"
+          children={configStore.controller.children}
         />
       </div>
     ),
@@ -222,7 +201,6 @@ const App: Component = () => {
     _showMetrics
   ) {
     const children = [];
-    console.log("Creating Split Pane", configStore, _showSerial);
 
     if (_showDashboard) {
       children.push(splitPanePanels.dashboard);
@@ -240,7 +218,6 @@ const App: Component = () => {
       children.push(splitPanePanels.metrics);
     }
 
-    console.log("Children", children);
     return (
       <SplitPane gutterClass="gutter gutter-vertical bg-light">
         <For each={children}>{(child) => child}</For>

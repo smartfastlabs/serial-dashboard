@@ -1,4 +1,5 @@
 import { createEffect, Component, onMount } from "solid-js";
+import { trackDeep } from "@solid-primitives/deep";
 import { createJSONEditor } from "vanilla-jsoneditor";
 import { faDownload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 
@@ -39,7 +40,7 @@ const JsonEditor: Component = (props) => {
     reader.onload = function (e) {
       try {
         let value = JSON.parse(e.target.result);
-        props.saveJSON({ json: value });
+        props.saveJSON(value);
         editor.set({ json: value });
       } catch (e) {
         console.log(e);
@@ -66,6 +67,7 @@ const JsonEditor: Component = (props) => {
   }
 
   onMount(() => {
+    console.log("MOUNT JSON EDITOR", content);
     editor = createJSONEditor({
       target: container,
       props: {
@@ -74,7 +76,6 @@ const JsonEditor: Component = (props) => {
           if (contentErrors) {
             console.error(contentErrors);
           } else if (updatedContent.json) {
-            console.log("SAVE JSON", updatedContent.json.config);
             props.saveJSON(updatedContent.json);
           } else {
             console.error("No JSON");
@@ -85,18 +86,11 @@ const JsonEditor: Component = (props) => {
     });
   });
   createEffect(() => {
-    console.log(
-      "REFRESH TOO",
-      props.config.config.showMetrics,
-      props.config.config.showSerialMonitor,
-      props.config.config.showDashboard
-    );
+    trackDeep(props.config);
     if (!editor) return;
-    console.log("REFRESH THREE", {
-      ...editor.json,
-      config: props.config.config,
+    editor.set({
+      json: props.config,
     });
-    editor.set({ json: { ...editor.json, config: props.config.config } });
   });
   return (
     <div

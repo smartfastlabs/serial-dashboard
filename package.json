@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@solid-primitives/deep": "^0.2.9",
     "@solid-primitives/resize-observer": "^2.0.26",
     "@solid-primitives/storage": "^4.2.1",
     "solid-js": "^1.8.11",

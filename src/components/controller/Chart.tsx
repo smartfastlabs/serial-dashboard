@@ -1,4 +1,5 @@
 import { onMount, createEffect, createSignal } from "solid-js";
+import { trackDeep } from "@solid-primitives/deep";
 import { makeResizeObserver } from "@solid-primitives/resize-observer";
 import Section from "./Section";
 import uPlot from "uplot";
@@ -15,13 +16,20 @@ const MyChart = (props) => {
 
   let series = [{}];
   let keys = [];
-  for (const [i, metric] of props.chart.dataSets.entries()) {
-    keys.push(metric.key);
-    series.push({
-      label: metric.name,
-      stroke: metric.color || COLORS[i % COLORS.length],
-      spanGaps: true,
-    });
+  // TODO: Make Reactivity work for this
+
+  function getSeries() {
+    series = [{}];
+    keys = [];
+    for (const [i, metric] of props.chart.dataSets.entries()) {
+      keys.push(metric.key);
+      series.push({
+        label: metric.name,
+        stroke: metric.color || COLORS[i % COLORS.length],
+        spanGaps: true,
+      });
+    }
+    return series;
   }
 
   const matchSyncKeys = (own, ext) => own == ext;
@@ -37,18 +45,20 @@ const MyChart = (props) => {
       match: [matchSyncKeys, matchSyncKeys],
     },
   };
-  let options = {
-    width: 500,
-    height: 300,
-    series: series,
-    cursor: cursorOpts,
-    scales: {
-      x: {
-        time: false,
+  function getOptions() {
+    return {
+      width: 500,
+      height: 300,
+      series: getSeries(),
+      cursor: cursorOpts,
+      scales: {
+        x: {
+          time: false,
+        },
+        y: {},
       },
-      y: {},
-    },
-  };
+    };
+  }
 
   function getData(metrics) {
     const startTime = metrics.length ? metrics[0].timestamp : Date.now();
@@ -68,20 +78,6 @@ const MyChart = (props) => {
     return data;
   }
 
-  function throttle(cb, limit) {
-    var wait = false;
-
-    return () => {
-      if (!wait) {
-        requestAnimationFrame(cb);
-        wait = true;
-        setTimeout(() => {
-          wait = false;
-        }, limit);
-      }
-    };
-  }
-
   function resize(entries) {
     for (const entry of entries) {
       if (entry.target === chartContainer) {
@@ -95,11 +91,20 @@ const MyChart = (props) => {
 
   onMount(() => {
     observe(chartContainer);
-    plot = new uPlot(options, getData(props.metrics), chartContainer);
+    plot = new uPlot(getOptions(), getData(props.metrics), chartContainer);
   });
 
   createEffect(() => {
     plot.setData(getData(props.metrics));
+  });
+
+  createEffect(() => {
+    try {
+      plot.destroy();
+      plot = new uPlot(getOptions(), [], chartContainer);
+    } catch (e) {
+      console.error("ERROR UPDATING CHART", e);
+    }
   });
 
   return <div class="w-100" ref={chartContainer}></div>;
