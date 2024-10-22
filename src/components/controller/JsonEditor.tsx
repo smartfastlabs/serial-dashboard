@@ -25,9 +25,7 @@ const JsonEditor: Component = (props) => {
     });
 
     const writable = await fileHandle.createWritable();
-    console.log(editor.json);
     const value = JSON.stringify(editor.json, null, 2);
-    console.log("SAVE", value);
     await writable.write(value);
     await writable.close();
   }

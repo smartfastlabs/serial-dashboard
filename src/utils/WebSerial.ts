@@ -95,6 +95,7 @@ export class WebSerialPort {
       }
     }
 
+    console.log("Disconnected");
     if (this.onDisconnect) {
       this.onDisconnect();
     }

@@ -225,9 +225,10 @@ const App: Component = () => {
     );
   }
   onMount(() => {
-    serial = new WebSerialPort(readSerial, baudRate(), readSerial, () =>
-      setIsConnected(false)
-    );
+    serial = new WebSerialPort(readSerial, baudRate(), () => {
+      console.log("ON DISCONNECT");
+      setIsConnected(false);
+    });
   });
 
   return (
