@@ -12,6 +12,12 @@ function Section(props) {
     <div class="">
       <div class="card-header" onClick={toggle} role="button">
         <h5 class="mb-0 d-flex align-items-center">
+          <Show when={isExpanded()}>
+            <i class="fas me-2 fa-minus-square"></i>
+          </Show>
+          <Show when={!isExpanded()}>
+            <i class="fas me-2 fa-plus-square"></i>
+          </Show>
           {props.header || "Section Header"}
           <span
             class={`ms-auto ${

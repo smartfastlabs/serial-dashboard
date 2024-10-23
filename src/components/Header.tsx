@@ -7,7 +7,7 @@ const BAUD_RATES = [
 
 const ViewControls: Component = (props) => {
   return (
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <ul class="navbar-nav me-auto ms-4 mb-lg-0">
       <li class="ms-3 form-check form-switch">
         <input
           class="form-check-input"

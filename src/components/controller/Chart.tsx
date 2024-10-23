@@ -16,7 +16,7 @@ const MyChart = (props) => {
 
   let series = [{}];
   let keys = [];
-  // TODO: Make Reactivity work for this
+  let data = [];
 
   function getSeries() {
     series = [{}];
@@ -61,6 +61,8 @@ const MyChart = (props) => {
   }
 
   function getData(metrics) {
+    // TODO: This includes A LOT of empty data points, maybe we should filter first for performance?
+    // I did it this way so all graphs are in sync (or at least that was the theory)
     const startTime = metrics.length ? metrics[0].timestamp : Date.now();
     const data = Array(series.length);
     for (let i = 0; i < series.length; i++) {
@@ -91,15 +93,24 @@ const MyChart = (props) => {
 
   onMount(() => {
     observe(chartContainer);
-    plot = new uPlot(getOptions(), getData(props.metrics), chartContainer);
+    data = getData(props.metrics.filter((m) => keys.indexOf(m.key) != -1));
+    plot = new uPlot(getOptions(), data, chartContainer);
   });
 
   createEffect(() => {
-    plot.setData(getData(props.metrics));
+    let newData = getData(
+      props.metrics.filter((m) => keys.indexOf(m.key) != -1)
+    );
+    if (newData[0].length != data[0].length) {
+      console.log("UPDATING CHART", keys);
+      data = newData;
+      plot.setData(data);
+    }
   });
 
   createEffect(() => {
     try {
+      console.log("DESTROYING CHART");
       plot.destroy();
       plot = new uPlot(getOptions(), [], chartContainer);
     } catch (e) {

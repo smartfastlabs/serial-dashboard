@@ -1,7 +1,12 @@
 import { createEffect, Component, onMount, onCleanup } from "solid-js";
 import { trackDeep } from "@solid-primitives/deep";
 import { createJSONEditor } from "vanilla-jsoneditor";
-import { faDownload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDownload,
+  faFolderOpen,
+  faQuestion,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
 const JsonEditor: Component = (props) => {
   const options = {};
@@ -58,6 +63,11 @@ const JsonEditor: Component = (props) => {
         type: "button",
         onClick: () => fileInput.click(),
         icon: faFolderOpen,
+      },
+      {
+        type: "button",
+        onClick: () => fileInput.click(),
+        icon: faQuestionCircle,
       }
     );
 
@@ -80,7 +90,10 @@ const JsonEditor: Component = (props) => {
             console.error(contentErrors);
           } else if (updatedContent.json) {
             props.saveJSON(updatedContent.json);
+          } else if (updatedContent.text) {
+            props.saveJSON(JSON.parse(updatedContent.text));
           } else {
+            console.log(updatedContent);
             console.error("No JSON");
           }
         },

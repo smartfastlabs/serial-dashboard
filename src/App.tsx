@@ -1,4 +1,11 @@
-import { createEffect, createSignal, Component, For, onMount } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  Component,
+  For,
+  onMount,
+  Show,
+} from "solid-js";
 import { produce } from "solid-js/store";
 import { createStore, reconcile } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
@@ -81,7 +88,6 @@ const App: Component = () => {
   });
 
   async function readSerial(event) {
-    console.log("READ SERIAL", event);
     if (!event) return;
     if (pausedAt()) {
       return messageBuffer.push({
@@ -93,8 +99,8 @@ const App: Component = () => {
       setMetrics(
         produce((current) => {
           const metric = getMetric(event);
-          if (current.length > 15000) {
-            current.splice(0, 12500);
+          if (current.length > 7500) {
+            current.splice(0, 5000);
           }
           current.push(metric);
         })
@@ -202,37 +208,36 @@ const App: Component = () => {
     metrics: createMetrics(),
   };
 
-  function createSplitPane(
-    connected,
-    _showSerial,
-    _showController,
-    _showEditor,
-    _showMetrics
-  ) {
-    console.log("CREATE SPLIT PANE", connected, _showSerial, _showController);
+  function createSplitPane() {
+    console.log("CREATE SPLIT PANE");
     const children = [];
 
-    if (_showController) {
+    if (configStore.config.showController) {
       children.push(splitPanePanels.controller);
     }
 
-    if (_showEditor) {
+    if (configStore.config.showEditor) {
       // We have to lazy load the editor or it pukes
       children.push(createJSONEditor());
     }
 
-    if (_showSerial) {
+    if (configStore.config.showSerialMonitor) {
       children.push(splitPanePanels.serial);
     }
 
-    if (_showMetrics) {
+    if (configStore.config.showMetrics) {
       children.push(splitPanePanels.metrics);
+    }
+    if (!children.length) {
+      children.push(<div style="margin-top: 65px;">GOTTA PICK SOMETHING</div>);
     }
 
     return (
-      <SplitPane gutterClass="gutter gutter-vertical bg-light">
-        <For each={children}>{(child) => child}</For>
-      </SplitPane>
+      <Show when={children.length > 1} fallback={children[0]}>
+        <SplitPane gutterClass="gutter gutter-vertical bg-light">
+          <For each={children}>{(child) => child}</For>
+        </SplitPane>
+      </Show>
     );
   }
   onMount(() => {
@@ -257,15 +262,7 @@ const App: Component = () => {
         pausedAt={pausedAt}
         setPausedAt={setPausedAt}
       />
-      <div class={styles.App}>
-        {createSplitPane(
-          isConnected(),
-          configStore.config.showSerialMonitor,
-          configStore.config.showController,
-          configStore.config.showEditor,
-          configStore.config.showMetrics
-        )}
-      </div>
+      <div class={styles.App}>{createSplitPane()}</div>
       <Footer />
     </>
   );
