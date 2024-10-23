@@ -3,7 +3,7 @@ import { Component } from "solid-js";
 const Button: Component = (props) => {
   return (
     <button
-      class={`${props.class} m-1 btn btn-primary`}
+      class={`m-1 btn btn-primary ${props.class} `}
       onMouseUp={() => props.onMouseUp && props.sendSerial(props.onMouseUp)}
       onMouseDown={() =>
         props.onMouseDown && props.sendSerial(props.onMouseDown)

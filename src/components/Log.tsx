@@ -42,7 +42,7 @@ const Log: Component = (props) => {
 
   return (
     <div class="vh-100 w-100 container-fluid overflow-hidden">
-      <div class="row bg-white w-100" style="margin-top: 60px">
+      <div class="row bg-white w-100" style="margin-top: 65px">
         <div class="input-group mb-3">
           <input
             type="text"

@@ -12,11 +12,11 @@ const ViewControls: Component = (props) => {
         <input
           class="form-check-input"
           type="checkbox"
-          id="showDashboardCheckbox"
-          onChange={(e) => props.setConfig("showDashboard", e.target.checked)}
-          checked={props.config.showDashboard}
+          id="showControllerCheckbox"
+          onChange={(e) => props.setConfig("showController", e.target.checked)}
+          checked={props.config.showController}
         />
-        <label class="form-check-label" for="showDashboardCheckbox">
+        <label class="form-check-label" for="showControllerCheckbox">
           controller
         </label>
       </li>
@@ -140,7 +140,7 @@ const Header: Component = (props) => {
   return (
     <nav class="navbar fixed-top d-flex navbar-expand-lg bg-body-tertiary">
       <a class="fw-bold navbar-brand" href="#">
-        <h3 class="my-0 py-0 ms-3">Serial Dashboard</h3>
+        <h3 class="my-0 py-0 ms-3">Serial Controller</h3>
         <small
           class="text-danger fw-bold"
           style="font-size: .8em; position: absolute; top: 10px; left: 200px; transform: rotate(25deg);"

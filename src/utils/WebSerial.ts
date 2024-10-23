@@ -61,6 +61,15 @@ export class WebSerialPort {
 
     var buffer = "";
     this.connected = true;
+
+    // THROW OUT JUNK JUST WAITING
+    try {
+      this.reader = this.port.readable.getReader();
+      await this.reader.read();
+    } finally {
+      this.reader.releaseLock();
+    }
+
     while (this.connected && this.port.readable) {
       this.reader = this.port.readable.getReader();
       try {

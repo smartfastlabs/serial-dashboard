@@ -1,4 +1,4 @@
-import { createEffect, Component, onMount } from "solid-js";
+import { createEffect, Component, onMount, onCleanup } from "solid-js";
 import { trackDeep } from "@solid-primitives/deep";
 import { createJSONEditor } from "vanilla-jsoneditor";
 import { faDownload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
@@ -63,6 +63,11 @@ const JsonEditor: Component = (props) => {
 
     return menuItems;
   }
+
+  onCleanup(() => {
+    console.log("CLEANUP JSON EDITOR");
+    editor.destroy();
+  });
 
   onMount(() => {
     console.log("MOUNT JSON EDITOR", content);

@@ -1,6 +1,6 @@
 import { createSignal, Component, Show } from "solid-js";
-import { faPlusSquare, faMinusSquare } from "@fortawesome/free-solid-svg-icons";
 import MyChart from "../controller/Chart";
+import MetricsReadMe from "./ReadMe";
 
 function getMetrics(metrics) {
   if (!metrics) return [];
@@ -87,46 +87,48 @@ const MetricRow: Component = (props) => {
 const MetricsOverview: Component = (props) => {
   const [expandedRows, setExpandedRows] = createSignal([]);
   return (
-    <div class="container" style="margin-top: 60px;">
-      <div class="card">
-        <div class="card-header">
-          <h4>Metrics Overview</h4>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <For each={props.metricStore}>
-              {(metric, i) => {
-                return (
-                  <MetricRow
-                    expanded={expandedRows().includes(metric.key)}
-                    value={metric.value}
-                    setExpanded={(expanded) => {
-                      console.log(
-                        "setExpanded",
-                        expanded,
-                        expandedRows(),
-                        expandedRows().includes(metric.key)
-                      );
-                      if (!expanded && expandedRows().includes(metric.key)) {
-                        setExpandedRows(
-                          expandedRows().filter((k) => k !== metric.key)
+    <div class="container" style="margin-top: 65px;">
+      <Show when={props.metrics.length > 0} fallback={<MetricsReadMe />}>
+        <div class="card">
+          <div class="card-header">
+            <h4>Metrics Overview ({props.metrics.length})</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <For each={props.metricStore}>
+                {(metric, i) => {
+                  return (
+                    <MetricRow
+                      expanded={expandedRows().includes(metric.key)}
+                      value={metric.value}
+                      setExpanded={(expanded) => {
+                        console.log(
+                          "setExpanded",
+                          expanded,
+                          expandedRows(),
+                          expandedRows().includes(metric.key)
                         );
-                      } else if (
-                        expanded &&
-                        !expandedRows().includes(metric.key)
-                      ) {
-                        setExpandedRows([...expandedRows(), metric.key]);
-                      }
-                    }}
-                    metric={metric}
-                    metrics={props.metrics}
-                  />
-                );
-              }}
-            </For>
+                        if (!expanded && expandedRows().includes(metric.key)) {
+                          setExpandedRows(
+                            expandedRows().filter((k) => k !== metric.key)
+                          );
+                        } else if (
+                          expanded &&
+                          !expandedRows().includes(metric.key)
+                        ) {
+                          setExpandedRows([...expandedRows(), metric.key]);
+                        }
+                      }}
+                      metric={metric}
+                      metrics={props.metrics}
+                    />
+                  );
+                }}
+              </For>
+            </div>
           </div>
         </div>
-      </div>
+      </Show>
     </div>
   );
 };

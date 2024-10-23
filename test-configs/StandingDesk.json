@@ -1,6 +1,6 @@
 {
   "config": {
-    "showDashboard": false,
+    "showController": false,
     "showEditor": true,
     "showMetrics": true,
     "showSerialMonitor": true

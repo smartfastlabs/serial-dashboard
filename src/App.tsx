@@ -6,7 +6,7 @@ import { SplitPane } from "solid-split-pane";
 import styles from "./App.module.css";
 import { WebSerialPort } from "./utils/WebSerial";
 import JsonEditor from "./components/controller/JsonEditor";
-import Item from "./components/controller/Item";
+import ControllerBase from "./components/controller/Base";
 import Log from "./components/Log";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -56,7 +56,7 @@ const App: Component = () => {
   if (!configStore.config) {
     setConfigStore((current) => {
       current.config = {
-        showDashboard: false,
+        showController: false,
         showEditor: false,
         showMetrics: false,
         showSerialMonitor: true,
@@ -81,6 +81,7 @@ const App: Component = () => {
   });
 
   async function readSerial(event) {
+    console.log("READ SERIAL", event);
     if (!event) return;
     if (pausedAt()) {
       return messageBuffer.push({
@@ -160,54 +161,64 @@ const App: Component = () => {
     setMessages([]);
   }
 
-  const splitPanePanels = {
-    dashboard: (
-      <div
-        class="vh-100 overflow-scroll"
-        style="height: calc(100% - 200px); padding-bottom: 60px; padding-top: 60px"
-      >
-        <Item
-          metricStore={metricStore}
-          metrics={metrics}
-          sendSerial={sendSerial}
-          type="container"
-          name="Dashboard"
-          children={configStore.controller.children}
-        />
-      </div>
-    ),
-    editor: (
+  function createController() {
+    return (
+      <ControllerBase
+        metricStore={metricStore}
+        metrics={metrics}
+        sendSerial={sendSerial}
+        configStore={configStore}
+      />
+    );
+  }
+
+  function createJSONEditor() {
+    return (
       <div class="vh-100 container-fluid p-0">
         <JsonEditor saveJSON={saveJSON} config={configStore} />
       </div>
-    ),
-    serial: (
+    );
+  }
+
+  function createSerialLog() {
+    return (
       <div class="vh-100 container-fluid p-0">
         <Log pausedAt={pausedAt} sendSerial={sendSerial} messages={messages} />
       </div>
-    ),
-    metrics: (
+    );
+  }
+
+  function createMetrics() {
+    return (
       <div class="vh-100 container-fluid p-0">
         <MetricsOverview metricStore={metricStore} metrics={metrics} />
       </div>
-    ),
+    );
+  }
+
+  const splitPanePanels = {
+    controller: createController(),
+    serial: createSerialLog(),
+    metrics: createMetrics(),
   };
 
   function createSplitPane(
     connected,
     _showSerial,
-    _showDashboard,
+    _showController,
     _showEditor,
     _showMetrics
   ) {
+    console.log("CREATE SPLIT PANE", connected, _showSerial, _showController);
     const children = [];
 
-    if (_showDashboard) {
-      children.push(splitPanePanels.dashboard);
+    if (_showController) {
+      children.push(splitPanePanels.controller);
     }
 
     if (_showEditor) {
-      children.push(splitPanePanels.editor);
+      // We have to lazy load the editor or it pukes
+      children.push(createJSONEditor());
     }
 
     if (_showSerial) {
@@ -250,7 +261,7 @@ const App: Component = () => {
         {createSplitPane(
           isConnected(),
           configStore.config.showSerialMonitor,
-          configStore.config.showDashboard,
+          configStore.config.showController,
           configStore.config.showEditor,
           configStore.config.showMetrics
         )}
