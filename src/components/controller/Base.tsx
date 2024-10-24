@@ -11,16 +11,21 @@ const ControllerBase: Component = (props: any) => {
       }
       fallback={<ControllerReadMe />}
     >
-      <div class="vh-100 overflow-scroll" style="margin-top: 65px">
-        <Item
-          metricStore={props.metricStore}
-          metrics={props.metrics}
-          sendSerial={props.sendSerial}
-          type="container"
-          name={props.configStore.controller.name}
-          class={props.configStore.controller.class}
-          children={props.configStore.controller.children}
-        />
+      <div class="vh-100 overflow-scroll" style="">
+        <div
+          class="overflow-scroll"
+          style="margin-top: 65px; height: calc(100% - 120px);"
+        >
+          <Item
+            metricStore={props.metricStore}
+            metrics={props.metrics}
+            sendSerial={props.sendSerial}
+            type="container"
+            name={props.configStore.controller.name}
+            class={props.configStore.controller.class}
+            children={props.configStore.controller.children}
+          />
+        </div>
       </div>
     </Show>
   );

@@ -214,7 +214,7 @@ const App: Component = () => {
     }
 
     if (configStore.config.showEditor) {
-      // We have to lazy load the editor or it pukes
+      // if we render create the editor before it is visible it will not render correctly
       children.push(createJSONEditor());
     }
 

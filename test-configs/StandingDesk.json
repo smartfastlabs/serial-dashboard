@@ -1,392 +1,418 @@
 {
   "config": {
-    "showController": false,
     "showEditor": true,
-    "showMetrics": true,
-    "showSerialMonitor": true
+    "showMetrics": false,
+    "showSerialMonitor": false,
+    "showController": true
   },
   "controller": {
     "type": "container",
     "class": "container w-100",
     "children": [
       {
-        "type": "chart",
-        "name": "Leg Position",
-        "class": "col",
-        "dataSets": [
-          {
-            "name": "Left Frontddd",
-            "key": "84-position-1"
-          },
-          {
-            "name": "Left Back",
-            "key": "84-position-2"
-          },
-          {
-            "name": "Right Front",
-            "key": "C8-position-1"
-          },
-          {
-            "name": "Right Back",
-            "key": "C8-position-2"
-          }
-        ]
-      },
-      {
-        "type": "container",
-        "class": "row",
-        "defaults": {
-          "class": "col",
-          "type": "button"
-        },
+        "type": "section",
+        "name": "Basic Controls",
         "children": [
           {
-            "name": "UP",
-            "onMouseDown": "0:3:200",
-            "onMouseUp": "0:0:0"
-          },
-          {
-            "name": "DOWN",
-            "onMouseDown": "0:3:-200",
-            "onMouseUp": "0:0:0"
-          },
-          {
-            "name": "STOP",
-            "onMouseClick": "0:0:0"
-          }
-        ]
-      },
-      {
-        "type": "container",
-        "class": "row",
-        "defaults": {
-          "class": "col",
-          "type": "metric"
-        },
-        "children": [
-          {
-            "name": "Mode",
-            "key": "mode"
-          },
-          {
-            "name": "Left Front",
-            "key": "84-position-1"
-          },
-          {
-            "name": "Left Back",
-            "key": "84-position-2"
-          },
-          {
-            "name": "Right Front",
-            "key": "C8-position-1"
-          },
-          {
-            "name": "Right Back",
-            "key": "C8-position-2"
-          }
-        ]
-      },
-      {
-        "type": "chart",
-        "name": "Bounds",
-        "hidden": true,
-        "class": "col",
-        "dataSets": [
-          {
-            "name": "Left Front Min",
-            "key": "84-min-1"
-          },
-          {
-            "name": "Left Back Max",
-            "key": "84-max-1"
-          },
-          {
-            "name": "Left Front Min",
-            "key": "84-min-2"
-          },
-          {
-            "name": "Left Back Max",
-            "key": "84-max-2"
-          },
-          {
-            "name": "Right Front Min",
-            "key": "C8-min-1"
-          },
-          {
-            "name": "Right Back Max",
-            "key": "C8-max-1"
-          },
-          {
-            "name": "Right Front Min",
-            "key": "C8-min-2"
-          },
-          {
-            "name": "Right Back Max",
-            "key": "C8-max-2"
-          },
-          {
-            "name": "Right Bounds Enabled",
-            "key": "C8-bounds-enabled"
-          },
-          {
-            "name": "Left Bounds Enabled",
-            "key": "84-bounds-enabled"
-          }
-        ]
-      },
-      {
-        "type": "container",
-        "class": "row",
-        "defaults": {
-          "class": "col",
-          "type": "button"
-        },
-        "children": [
-          {
-            "name": "ENABLE BOUNDS",
-            "onMouseDown": "0:13:0"
-          },
-          {
-            "name": "DISABLE BOUNDS",
-            "onMouseDown": "0:12:0"
-          }
-        ]
-      },
-      {
-        "type": "container",
-        "class": "row",
-        "defaults": {
-          "class": "col",
-          "type": "button"
-        },
-        "children": [
-          {
-            "name": "SET ZERO",
-            "onMouseDown": "0:8:0"
-          },
-          {
-            "name": "SET MIN",
-            "onMouseDown": "0:9:0"
-          },
-          {
-            "name": "SET MAX",
-            "onMouseDown": "0:10:0"
-          }
-        ]
-      },
-      {
-        "type": "chart",
-        "hidden": true,
-        "name": "Encoder Offset",
-        "class": "col",
-        "dataSets": [
-          {
-            "name": "Left Front",
-            "key": "84-offset-1"
-          },
-          {
-            "name": "Left Front",
-            "key": "84-offset-2"
-          },
-          {
-            "name": "Right Front",
-            "key": "C8-offset-1"
-          },
-          {
-            "name": "Right Back",
-            "key": "C8-offset-2"
-          }
-        ]
-      },
-      {
-        "type": "container",
-        "class": "row",
-        "children": [
-          {
-            "type": "container",
+            "type": "chart",
+            "name": "Leg Position",
             "class": "col",
-            "children": [
+            "dataSets": [
               {
-                "type": "container",
-                "class": "row",
-                "defaults": {
-                  "class": "col",
-                  "type": "button"
-                },
-                "children": [
-                  {
-                    "name": "Both",
-                    "type": "label"
-                  },
-                  {
-                    "name": "UP",
-                    "onMouseDown": "1:3:200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "DOWN",
-                    "onMouseDown": "1:3:-200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "STOP",
-                    "onMouseClick": "0:0:0"
-                  }
-                ]
+                "name": "Left Front",
+                "key": "84-position-1"
               },
               {
-                "type": "container",
-                "class": "row",
-                "defaults": {
-                  "class": "col",
-                  "type": "button"
-                },
-                "children": [
-                  {
-                    "name": "Front",
-                    "type": "label"
-                  },
-                  {
-                    "name": "UP",
-                    "onMouseDown": "1:4:200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "DOWN",
-                    "onMouseDown": "1:4:-200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "STOP",
-                    "onMouseClick": "0:0:0"
-                  }
-                ]
+                "name": "Left Back",
+                "key": "84-position-2"
               },
               {
-                "type": "container",
-                "class": "row",
-                "defaults": {
-                  "class": "col",
-                  "type": "button"
-                },
-                "children": [
-                  {
-                    "name": "Back",
-                    "type": "label"
-                  },
-                  {
-                    "name": "UP",
-                    "onMouseDown": "1:5:200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "DOWN",
-                    "onMouseDown": "1:5:-200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "STOP",
-                    "onMouseClick": "0:0:0"
-                  }
-                ]
+                "name": "Right Front",
+                "key": "C8-position-1"
+              },
+              {
+                "name": "Right Back",
+                "key": "C8-position-2"
               }
             ]
           },
           {
             "type": "container",
-            "class": "col",
+            "class": "row",
             "defaults": {
               "class": "col",
               "type": "button"
             },
             "children": [
               {
+                "name": "UP",
+                "onMouseDown": "0:3:200",
+                "onMouseUp": "0:0:0"
+              },
+              {
+                "name": "DOWN",
+                "onMouseDown": "0:3:-200",
+                "onMouseUp": "0:0:0"
+              },
+              {
+                "name": "STOP",
+                "onMouseClick": "0:0:0",
+                "class": "btn-danger"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "class": "row",
+            "defaults": {
+              "class": "col",
+              "type": "metric"
+            },
+            "children": [
+              {
+                "name": "Mode",
+                "key": "mode"
+              },
+              {
+                "name": "Left Front",
+                "key": "84-position-1"
+              },
+              {
+                "name": "Left Back",
+                "key": "84-position-2"
+              },
+              {
+                "name": "Right Front",
+                "key": "C8-position-1"
+              },
+              {
+                "name": "Right Back",
+                "key": "C8-position-2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "name": "Bounds Controls",
+        "hidden": true,
+        "children": [
+          {
+            "type": "chart",
+            "name": "Bounds",
+            "hidden": true,
+            "class": "col",
+            "dataSets": [
+              {
+                "name": "Left Front Min",
+                "key": "84-min-1"
+              },
+              {
+                "name": "Left Back Max",
+                "key": "84-max-1"
+              },
+              {
+                "name": "Left Front Min",
+                "key": "84-min-2"
+              },
+              {
+                "name": "Left Back Max",
+                "key": "84-max-2"
+              },
+              {
+                "name": "Right Front Min",
+                "key": "C8-min-1"
+              },
+              {
+                "name": "Right Back Max",
+                "key": "C8-max-1"
+              },
+              {
+                "name": "Right Front Min",
+                "key": "C8-min-2"
+              },
+              {
+                "name": "Right Back Max",
+                "key": "C8-max-2"
+              },
+              {
+                "name": "Right Bounds Enabled",
+                "key": "C8-bounds-enabled"
+              },
+              {
+                "name": "Left Bounds Enabled",
+                "key": "84-bounds-enabled"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "class": "row",
+            "defaults": {
+              "class": "col",
+              "type": "button"
+            },
+            "children": [
+              {
+                "name": "ENABLE BOUNDS",
+                "onMouseDown": "0:13:0"
+              },
+              {
+                "name": "DISABLE BOUNDS",
+                "onMouseDown": "0:12:0"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "class": "row",
+            "defaults": {
+              "class": "col",
+              "type": "button"
+            },
+            "children": [
+              {
+                "name": "SET ZERO",
+                "onMouseDown": "0:8:0"
+              },
+              {
+                "name": "SET MIN",
+                "onMouseDown": "0:9:0"
+              },
+              {
+                "name": "SET MAX",
+                "onMouseDown": "0:10:0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "name": "Encoder Offset",
+        "hidden": true,
+        "children": [
+          {
+            "type": "chart",
+            "class": "col",
+            "dataSets": [
+              {
+                "name": "Left Front",
+                "key": "84-offset-1"
+              },
+              {
+                "name": "Left Front",
+                "key": "84-offset-2"
+              },
+              {
+                "name": "Right Front",
+                "key": "C8-offset-1"
+              },
+              {
+                "name": "Right Back",
+                "key": "C8-offset-2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "children": [
+          {
+            "type": "container",
+            "class": "row",
+            "children": [
+              {
                 "type": "container",
-                "class": "row",
-                "defaults": {
-                  "class": "col",
-                  "type": "button"
-                },
+                "class": "col",
                 "children": [
                   {
-                    "name": "Both",
-                    "type": "label"
+                    "type": "container",
+                    "class": "row",
+                    "defaults": {
+                      "class": "col",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "name": "Both",
+                        "type": "label"
+                      },
+                      {
+                        "name": "UP",
+                        "onMouseDown": "1:3:200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "DOWN",
+                        "onMouseDown": "1:3:-200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "STOP",
+                        "onMouseClick": "0:0:0"
+                      }
+                    ]
                   },
                   {
-                    "name": "UP",
-                    "onMouseDown": "2:3:200",
-                    "onMouseUp": "0:0:0"
+                    "type": "container",
+                    "class": "row",
+                    "defaults": {
+                      "class": "col",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "name": "Front",
+                        "type": "label"
+                      },
+                      {
+                        "name": "UP",
+                        "onMouseDown": "1:4:200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "DOWN",
+                        "onMouseDown": "1:4:-200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "STOP",
+                        "onMouseClick": "0:0:0"
+                      }
+                    ]
                   },
                   {
-                    "name": "DOWN",
-                    "onMouseDown": "2:3:-200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "STOP",
-                    "onMouseClick": "0:0:0"
+                    "type": "container",
+                    "class": "row",
+                    "defaults": {
+                      "class": "col",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "name": "Back",
+                        "type": "label"
+                      },
+                      {
+                        "name": "UP",
+                        "onMouseDown": "1:5:200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "DOWN",
+                        "onMouseDown": "1:5:-200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "STOP",
+                        "onMouseClick": "0:0:0"
+                      }
+                    ]
                   }
                 ]
               },
               {
                 "type": "container",
-                "class": "row",
+                "class": "col",
                 "defaults": {
                   "class": "col",
                   "type": "button"
                 },
                 "children": [
                   {
-                    "name": "Front",
-                    "type": "label"
+                    "type": "container",
+                    "class": "row",
+                    "defaults": {
+                      "class": "col",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "name": "Both",
+                        "type": "label"
+                      },
+                      {
+                        "name": "UP",
+                        "onMouseDown": "2:3:200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "DOWN",
+                        "onMouseDown": "2:3:-200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "STOP",
+                        "onMouseClick": "0:0:0"
+                      }
+                    ]
                   },
                   {
-                    "name": "UP",
-                    "onMouseDown": "2:4:200",
-                    "onMouseUp": "0:0:0"
+                    "type": "container",
+                    "class": "row",
+                    "defaults": {
+                      "class": "col",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "name": "Front",
+                        "type": "label"
+                      },
+                      {
+                        "name": "UP",
+                        "onMouseDown": "2:4:200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "DOWN",
+                        "onMouseDown": "2:4:-200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "STOP",
+                        "onMouseClick": "0:0:0"
+                      }
+                    ]
                   },
                   {
-                    "name": "DOWN",
-                    "onMouseDown": "2:4:-200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "STOP",
-                    "onMouseClick": "0:0:0"
-                  }
-                ]
-              },
-              {
-                "type": "container",
-                "class": "row",
-                "defaults": {
-                  "class": "col",
-                  "type": "button"
-                },
-                "children": [
-                  {
-                    "name": "Back",
-                    "type": "label"
-                  },
-                  {
-                    "name": "UP",
-                    "onMouseDown": "2:5:200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "DOWN",
-                    "onMouseDown": "2:5:-200",
-                    "onMouseUp": "0:0:0"
-                  },
-                  {
-                    "name": "STOP",
-                    "onMouseClick": "0:0:0"
+                    "type": "container",
+                    "class": "row",
+                    "defaults": {
+                      "class": "col",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "name": "Back",
+                        "type": "label"
+                      },
+                      {
+                        "name": "UP",
+                        "onMouseDown": "2:5:200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "DOWN",
+                        "onMouseDown": "2:5:-200",
+                        "onMouseUp": "0:0:0"
+                      },
+                      {
+                        "name": "STOP",
+                        "onMouseClick": "0:0:0"
+                      }
+                    ]
                   }
                 ]
               }
             ]
           }
-        ]
+        ],
+        "name": "Advanced Controls",
+        "hidden": true
       }
     ]
   }
