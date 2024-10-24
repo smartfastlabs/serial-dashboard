@@ -88,10 +88,10 @@ const MetricsOverview: Component = (props) => {
   const [expandedRows, setExpandedRows] = createSignal([]);
   return (
     <div class="container" style="margin-top: 65px;">
-      <Show when={props.metrics.length > 0} fallback={<MetricsReadMe />}>
+      <Show when={props.metricStore.length > 0} fallback={<MetricsReadMe />}>
         <div class="card">
           <div class="card-header">
-            <h4>Metrics Overview ({props.metrics.length})</h4>
+            <h4>Metrics Overview</h4>
           </div>
           <div class="card-body">
             <div class="row">

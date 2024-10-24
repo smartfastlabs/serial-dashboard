@@ -1,4 +1,4 @@
-import { onMount, createEffect, createSignal } from "solid-js";
+import { onMount, createEffect, createSignal, onCleanup } from "solid-js";
 import { trackDeep } from "@solid-primitives/deep";
 import { makeResizeObserver } from "@solid-primitives/resize-observer";
 import Section from "./Section";
@@ -17,6 +17,7 @@ const MyChart = (props) => {
   let series = [{}];
   let keys = [];
   let data = [];
+  let timer = null;
 
   function getSeries() {
     series = [{}];
@@ -91,31 +92,33 @@ const MyChart = (props) => {
     }
   }
 
+  onCleanup(() => {
+    unobserve(chartContainer);
+    clearInterval(timer);
+  });
+
   onMount(() => {
     observe(chartContainer);
     data = getData(props.metrics.filter((m) => keys.indexOf(m.key) != -1));
     plot = new uPlot(getOptions(), data, chartContainer);
-  });
 
-  createEffect(() => {
-    let newData = getData(
-      props.metrics.filter((m) => keys.indexOf(m.key) != -1)
-    );
-    if (newData[0].length != data[0].length) {
-      console.log("UPDATING CHART", keys);
-      data = newData;
-      plot.setData(data);
-    }
-  });
-
-  createEffect(() => {
-    try {
-      console.log("DESTROYING CHART");
-      plot.destroy();
-      plot = new uPlot(getOptions(), [], chartContainer);
-    } catch (e) {
-      console.error("ERROR UPDATING CHART", e);
-    }
+    timer = setInterval(() => {
+      if (chartContainer.offsetParent == null) {
+        return;
+      }
+      console.log(
+        "UPDATING CHART",
+        keys.length,
+        chartContainer.offsetParent == null
+      );
+      let newData = getData(
+        props.metrics.filter((m) => keys.indexOf(m.key) != -1)
+      );
+      if (newData[0].length != data[0].length) {
+        data = newData;
+        plot.setData(data);
+      }
+    }, 250);
   });
 
   return <div class="w-100" ref={chartContainer}></div>;

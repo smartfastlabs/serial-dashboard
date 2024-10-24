@@ -41,11 +41,11 @@ const App: Component = () => {
     name: "config",
   });
   const [metricStore, setMetricStore] = createStore([]);
-  const [metrics, setMetrics] = createStore([]);
   const [messages, setMessages] = createStore([]);
   const [baudRate, setBaudRate] = createSignal(115200);
   const [isConnected, setIsConnected] = createSignal(false);
   const [pausedAt, setPausedAt] = createSignal(null);
+  const metrics = [];
   const messageBuffer = [];
   let serial;
 
@@ -96,15 +96,12 @@ const App: Component = () => {
       });
     }
     if ((event.detail.match(/>/g) || []).length == 1) {
-      setMetrics(
-        produce((current) => {
-          const metric = getMetric(event);
-          if (current.length > 7500) {
-            current.splice(0, 5000);
-          }
-          current.push(metric);
-        })
-      );
+      const metric = getMetric(event);
+      if (metrics.length > 25000) {
+        metrics.splice(0, 5000);
+      }
+      metrics.push(metric);
+
       setMetricStore(
         produce((current) => {
           const metric = getMetric(event);
@@ -163,7 +160,7 @@ const App: Component = () => {
 
   async function clearData() {
     setMetricStore((current) => []);
-    setMetrics([]);
+    metrics.length = 0;
     setMessages([]);
   }
 
