@@ -63,6 +63,12 @@ const App: Component = () => {
   if (!configStore.config) {
     setConfigStore((current) => {
       current.config = {
+        serial: {
+          baudRate: 115200,
+          sendNewLine: true,
+          sendCarriageReturn: true,
+          scrollLock: true,
+        },
         showController: false,
         showEditor: false,
         showMetrics: false,
@@ -71,10 +77,29 @@ const App: Component = () => {
     });
   }
 
+  if (!configStore.config.serial) {
+    setConfigStore((current) => {
+      current.config.serial = {
+        baudRate: 115200,
+        sendNewLine: true,
+        sendCarriageReturn: true,
+        scrollLock: true,
+      };
+    });
+  }
+
   function setConfig(key, value) {
     setConfigStore(
       produce((current) => {
         current.config[key] = value;
+      })
+    );
+  }
+
+  function setSerialConfig(key, value) {
+    setConfigStore(
+      produce((current) => {
+        current.config.serial[key] = value;
       })
     );
   }
@@ -186,7 +211,13 @@ const App: Component = () => {
   function createSerialLog() {
     return (
       <div class="vh-100 container-fluid p-0">
-        <Log pausedAt={pausedAt} sendSerial={sendSerial} messages={messages} />
+        <Log
+          config={configStore.config.serial}
+          setConfig={setSerialConfig}
+          pausedAt={pausedAt}
+          sendSerial={sendSerial}
+          messages={messages}
+        />
       </div>
     );
   }
@@ -250,8 +281,8 @@ const App: Component = () => {
         connect={connect}
         disconnect={disconnect}
         isConnected={isConnected}
-        baudRate={baudRate}
-        setBaudRate={setBaudRate}
+        baudRate={configStore.config.baudRate}
+        setSerialConfig={setSerialConfig}
         clearData={clearData}
         sendSerial={sendSerial}
         config={configStore.config}

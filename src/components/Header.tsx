@@ -6,58 +6,28 @@ const BAUD_RATES = [
 ];
 
 const ViewControls: Component = (props) => {
+  function ToggleButton(button) {
+    return (
+      <li class="ms-3 form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id={`${button.key}Checkbox`}
+          onChange={(e) => props.setConfig(button.key, e.target.checked)}
+          checked={props.config[button.key]}
+        />
+        <label class="form-check-label" for={`${button.key}Checkbox`}>
+          {button.name}
+        </label>
+      </li>
+    );
+  }
   return (
     <ul class="navbar-nav me-auto ms-4 mb-lg-0">
-      <li class="ms-3 form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          id="showControllerCheckbox"
-          onChange={(e) => props.setConfig("showController", e.target.checked)}
-          checked={props.config.showController}
-        />
-        <label class="form-check-label" for="showControllerCheckbox">
-          controller
-        </label>
-      </li>
-      <li class="ms-3 form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          id="showEditorCheckbox"
-          onChange={(e) => props.setConfig("showEditor", e.target.checked)}
-          checked={props.config.showEditor}
-        />
-        <label class="form-check-label" for="showEditorCheckbox">
-          configurator
-        </label>
-      </li>
-      <li class="ms-3 form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          id="showSerialMonitorCheckbox"
-          onChange={(e) =>
-            props.setConfig("showSerialMonitor", e.target.checked)
-          }
-          checked={props.config.showSerialMonitor}
-        />
-        <label class="form-check-label" for="showSerialMonitorCheckbox">
-          monitor
-        </label>
-      </li>
-      <li class="ms-3 form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          id="showMetricsCheckbox"
-          onChange={(e) => props.setConfig("showMetrics", e.target.checked)}
-          checked={props.config.showMetrics}
-        />
-        <label class="form-check-label" for="showMetricsCheckbox">
-          metrics
-        </label>
-      </li>
+      <ToggleButton key="showController" name="controller" />
+      <ToggleButton key="showEditor" name="configurator" />
+      <ToggleButton key="showSerialMonitor" name="monitor" />
+      <ToggleButton key="showMetrics" name="metrics" />
     </ul>
   );
 };
@@ -107,7 +77,7 @@ const SerialControls: Component = (props) => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Baudrate: {props.baudRate()}
+                Baudrate: {props.config.serial.baudRate}
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                 <For each={BAUD_RATES}>
@@ -115,7 +85,7 @@ const SerialControls: Component = (props) => {
                     <li>
                       <a
                         class="dropdown-item"
-                        onClick={() => props.setBaudRate(rate)}
+                        onClick={() => props.setSerialConfig("baudRate", rate)}
                       >
                         {rate}
                       </a>
@@ -140,7 +110,7 @@ const Header: Component = (props) => {
   return (
     <nav class="navbar fixed-top d-flex navbar-expand-lg bg-body-tertiary">
       <a class="fw-bold navbar-brand" href="#">
-        <h3 class="my-0 py-0 ms-3">Serial Controller</h3>
+        <h3 class="my-0 py-0 ms-3">Serial Dashboard</h3>
         <small
           class="text-danger fw-bold"
           style="font-size: .8em; position: absolute; top: 10px; left: 200px; transform: rotate(25deg);"

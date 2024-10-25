@@ -75,8 +75,8 @@ const Log: Component = (props) => {
               class="form-check-input"
               type="checkbox"
               id="scrollLockCheckbox"
-              checked={!scrollLock()}
-              onChange={(e) => setScrollLock(!e.target.checked)}
+              checked={!props.config.scrollLock}
+              onChange={(e) => props.setConfig("scrollLock", !e.target.checked)}
             />
             <label
               class="fw-bold float-start form-check-label"
@@ -90,8 +90,10 @@ const Log: Component = (props) => {
               class="form-check-input"
               type="checkbox"
               id="showOutgoingCheckbox"
-              checked={showOutgoing()}
-              onChange={(e) => setShowOutgoing(e.target.checked)}
+              checked={props.config.showOutgoing}
+              onChange={(e) =>
+                props.setConfig("showOutgoing", e.target.checked)
+              }
             />
             <label
               class="fw-bold float-start form-check-label"
@@ -105,8 +107,8 @@ const Log: Component = (props) => {
               class="form-check-input"
               type="checkbox"
               id="sendNewLineCheckbox"
-              checked={sendNewLine()}
-              onChange={(e) => setSendNewLine(e.target.checked)}
+              checked={props.config.sendNewLine}
+              onChange={(e) => props.setConfig("sendNewLine", e.target.checked)}
             />
             <label
               class="float-start fw-bold form-check-label"
@@ -120,8 +122,10 @@ const Log: Component = (props) => {
               class="form-check-input"
               type="checkbox"
               id="sendCarriageReturnCheckbox"
-              checked={sendCarriageReturn()}
-              onChange={(e) => setSendCarriageReturn(e.target.checked)}
+              checked={props.config.sendCarriageReturn}
+              onChange={(e) =>
+                props.setConfig("sendCarriageReturn", e.target.checked)
+              }
             />
             <label
               class="float-start fw-bold form-check-label"
@@ -134,7 +138,7 @@ const Log: Component = (props) => {
       </div>
       <ul
         class={`list-group ${
-          scrollLock() ? "overflow-hidden" : "overflow-scroll"
+          props.config.scrollLock ? "overflow-hidden" : "overflow-scroll"
         }`}
         style="height: calc(100% - 220px);"
         ref={messageContainer}

@@ -1,9 +1,15 @@
 {
   "config": {
     "showEditor": true,
-    "showMetrics": false,
-    "showSerialMonitor": false,
-    "showController": true
+    "showMetrics": true,
+    "showSerialMonitor": true,
+    "showController": true,
+    "serial": {
+      "baudRate": 112500,
+      "sendNewLine": true,
+      "sendCarriageReturn": true,
+      "scrollLock": true
+    }
   },
   "controller": {
     "type": "container",
@@ -46,12 +52,12 @@
             "children": [
               {
                 "name": "UP",
-                "onMouseDown": "0:3:200",
+                "onMouseDown": "0:3:255",
                 "onMouseUp": "0:0:0"
               },
               {
                 "name": "DOWN",
-                "onMouseDown": "0:3:-200",
+                "onMouseDown": "0:3:-255",
                 "onMouseUp": "0:0:0"
               },
               {
