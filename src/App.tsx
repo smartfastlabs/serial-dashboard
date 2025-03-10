@@ -120,7 +120,7 @@ const App: Component = () => {
         detail: event.detail,
       });
     }
-    if ((event.detail.match(/>/g) || []).length == 1) {
+    if (event.detail[0] === ">" && event.detail.indexOf(">", 1) === -1) {
       const metric = getMetric(event);
       if (metrics.length > 25000) {
         metrics.splice(0, 5000);

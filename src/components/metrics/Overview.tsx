@@ -1,135 +1,83 @@
-import { createSignal, Component, Show } from "solid-js";
-import MyChart from "../controller/Chart";
+import { createSignal, Component, Show, createEffect } from "solid-js";
+import {
+  DragDropProvider,
+  DragDropSensors,
+  DragEventHandler,
+  createDraggable,
+  createDroppable,
+} from "@thisbeyond/solid-dnd";
+
+import MetricRow from "./Row";
 import MetricsReadMe from "./ReadMe";
-
-function getMetrics(metrics) {
-  if (!metrics) return [];
-  const temp = {};
-  for (let m of metrics) {
-    temp[m.key] = m.value;
-  }
-
-  const output = [];
-  for (let key in temp) {
-    output.push({ key, value: temp[key] });
-  }
-
-  output.sort((a, b) => a.key.localeCompare(b.key));
-  return output;
-}
-
-const MetricRow: Component = (props) => {
-  const [expanded, setExpanded] = createSignal(props.expanded);
-  return (
-    <>
-      <div class="col-12 mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <a
-            href="#"
-            onClick={() => {
-              console.log("expand");
-              setExpanded(!expanded());
-              props.setExpanded(expanded());
-            }}
-            class="metric-timestamp"
-          >
-            <Show when={expanded()}>
-              <i class="fas me-2 fa-minus-square"></i>
-            </Show>
-            <Show when={!expanded()}>
-              <i class="fas me-2 fa-plus-square"></i>
-            </Show>
-            {props.metric.key}
-          </a>
-          <div
-            onClick={() => {
-              console.log("expand");
-              setExpanded(!expanded());
-              props.setExpanded(expanded());
-            }}
-            class="metric-timestamp"
-          >
-            {props.metric.timestamp.toLocaleTimeString()}
-          </div>
-          <div class="metric-value d-flex align-items-center">
-            <span>{props.value}</span>
-            <Show when={props.metric.changeDirection == "up"}>
-              <i class="fas fa-arrow-up text-success ms-2"></i>
-            </Show>
-            <Show when={props.metric.changeDirection == "down"}>
-              <i class="fas fa-arrow-down text-danger ms-2"></i>
-            </Show>
-          </div>
-        </div>
-      </div>
-      <Show when={expanded()}>
-        <div class="col-12">
-          <MyChart
-            metrics={props.metrics}
-            chart={{
-              type: "chart",
-              name: props.metric.key,
-              hidden: true,
-              dataSets: [
-                {
-                  name: props.metric.key,
-                  key: props.metric.key,
-                },
-              ],
-            }}
-          />
-        </div>
-      </Show>
-    </>
-  );
-};
 
 const MetricsOverview: Component = (props) => {
   const [expandedRows, setExpandedRows] = createSignal([]);
+  const [expandAll, setExpandAll] = createSignal(false);
+  function onDragEnd(event) {
+    console.log("onDragEnd", event);
+  }
   return (
-    <div class="container" style="margin-top: 65px;">
-      <Show when={props.metricStore.length > 0} fallback={<MetricsReadMe />}>
-        <div class="card">
-          <div class="card-header">
-            <h4>Metrics Overview</h4>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <For each={props.metricStore}>
-                {(metric, i) => {
-                  return (
-                    <MetricRow
-                      expanded={expandedRows().includes(metric.key)}
-                      value={metric.value}
-                      setExpanded={(expanded) => {
-                        console.log(
-                          "setExpanded",
-                          expanded,
-                          expandedRows(),
-                          expandedRows().includes(metric.key)
-                        );
-                        if (!expanded && expandedRows().includes(metric.key)) {
-                          setExpandedRows(
-                            expandedRows().filter((k) => k !== metric.key)
+    <DragDropProvider onDragEnd={onDragEnd}>
+      <DragDropSensors />
+      <div
+        class="container overflow-scroll"
+        style="margin-top: 65px; height: calc(100% - 110px);"
+      >
+        <Show when={props.metricStore.length > 0} fallback={<MetricsReadMe />}>
+          <div class="card">
+            <div class="card-header">
+              <h4>
+                Metrics Overview (
+                <a href="#" onClick={() => setExpandAll(!expandAll())}>
+                  <Show fallback={"Show All"} when={expandAll()}>
+                    Hide All
+                  </Show>
+                </a>
+                )
+              </h4>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <For each={props.metricStore}>
+                  {(metric, i) => {
+                    return (
+                      <MetricRow
+                        expandAll={expandAll}
+                        expanded={expandedRows().includes(metric.key)}
+                        value={metric.value}
+                        setExpanded={(expanded) => {
+                          console.log(
+                            "setExpanded",
+                            expanded,
+                            expandedRows(),
+                            expandedRows().includes(metric.key)
                           );
-                        } else if (
-                          expanded &&
-                          !expandedRows().includes(metric.key)
-                        ) {
-                          setExpandedRows([...expandedRows(), metric.key]);
-                        }
-                      }}
-                      metric={metric}
-                      metrics={props.metrics}
-                    />
-                  );
-                }}
-              </For>
+                          if (
+                            !expanded &&
+                            expandedRows().includes(metric.key)
+                          ) {
+                            setExpandedRows(
+                              expandedRows().filter((k) => k !== metric.key)
+                            );
+                          } else if (
+                            expanded &&
+                            !expandedRows().includes(metric.key)
+                          ) {
+                            setExpandedRows([...expandedRows(), metric.key]);
+                          }
+                        }}
+                        metric={metric}
+                        metrics={props.metrics}
+                      />
+                    );
+                  }}
+                </For>
+              </div>
             </div>
           </div>
-        </div>
-      </Show>
-    </div>
+        </Show>
+      </div>
+    </DragDropProvider>
   );
 };
 

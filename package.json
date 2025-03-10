@@ -20,6 +20,7 @@
     "@solid-primitives/deep": "^0.2.9",
     "@solid-primitives/resize-observer": "^2.0.26",
     "@solid-primitives/storage": "^4.2.1",
+    "@thisbeyond/solid-dnd": "^0.7.5",
     "solid-js": "^1.8.11",
     "solid-split-pane": "^0.0.5",
     "uplot": "^1.6.31",

@@ -7,6 +7,7 @@ const ControllerBase: Component = (props: any) => {
     <Show
       when={
         props.configStore.controller &&
+        props.configStore.controller.children &&
         props.configStore.controller.children.length
       }
       fallback={<ControllerReadMe />}
