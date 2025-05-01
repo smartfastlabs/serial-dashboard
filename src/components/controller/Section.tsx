@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { Show, createSignal } from "solid-js";
 
 function Section(props) {
   const [isExpanded, setIsExpanded] = createSignal(props.isExpanded);
