@@ -1,4 +1,6 @@
 # Browser Based Serial Dashboard
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a66e39e9-90a5-46c6-9454-f3f3bb7ca36b/deploy-status)](https://app.netlify.com/projects/serial-dashboard/deploys)
+
 Did you know most modern browsers support Serial Communication? Don't worry, neither did I untill I was working on a project and "out grew" the Arduino serial monitor .  Here is a simple(ish) browser based serial monitoring, command, and dashboard tool I built [serialdashboard.com](https://www.serialdashboard.com).
 
 ## Features
