@@ -1,0 +1,59 @@
+{
+  "config": {
+    "serial": {
+      "baudRate": 112500,
+      "sendNewLine": true,
+      "sendCarriageReturn": true,
+      "scrollLock": true
+    },
+    "showController": true,
+    "showEditor": true,
+    "showMetrics": true,
+    "showSerialMonitor": false
+  },
+  "controller": {
+    "type": "container",
+    "class": "container w-100",
+    "children": [
+      {
+        "type": "section",
+        "name": "Basic Controls",
+        "children": [
+          {
+            "type": "chart",
+            "name": "Leg Position",
+            "class": "col",
+            "dataSets": [
+              {
+                "name": "Sin",
+                "key": "sin"
+              },
+              {
+                "name": "Cos",
+                "key": "cos"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "class": "row",
+            "defaults": {
+              "class": "col",
+              "type": "button"
+            },
+            "children": [
+              {
+                "name": "Say Hi :)",
+                "onMouseDown": "Hello!"
+              },
+              {
+                "name": "Say Bye :(",
+                "onMouseDown": "Bye!"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
