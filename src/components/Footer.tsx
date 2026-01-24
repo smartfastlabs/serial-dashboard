@@ -13,7 +13,7 @@ const Footer: Component = () => {
 
         <div class="col-lg-3 text-end ">
           <a
-            href="https://github.com/smarfastlabs/serialdashboard"
+            href="https://github.com/smartfastlabs/serial-dashboard"
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-outline-dark fw-bolder"
